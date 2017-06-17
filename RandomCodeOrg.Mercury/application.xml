@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationDescriptor xmlns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor">
+
+  <Information>
+    <Title>Mercury</Title>
+    <Description>
+      This is an example.
+    </Description>
+  </Information>
+
+  <Configuration>
+
+
+    <Compilation>
+      <Namespaces>
+        <Import>System.Reflection</Import>
+        <Import>System.Collections</Import>
+        <Import>System.Collections.Generic</Import>
+      </Namespaces>
+
+      <Extensions>
+        <Type Name="TestClass"  />
+        <Type Name="TestClass" />
+      </Extensions>
+      
+    </Compilation>
+
+
+  </Configuration>
+
+
+
+
+</ApplicationDescriptor>

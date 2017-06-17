@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ENetFramework"
+    targetNamespace="http://randomcodeorg.github.com/ENetFramework"
+    elementFormDefault="qualified"
+    xmlns="http://randomcodeorg.github.com/ENetFramework"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+
+  <xs:element name="Fragment" type="FragmentType" />
+  <xs:element name="Label" type="LabelType" />
+  <xs:element name="Text" type="LabelType" />
+  <xs:element name="TextBox" type="TextBoxType" />
+  <xs:element name="TextArea" type="TextAreaType" />
+  <xs:element name="SubmitButton" type="SubmitButtonType" />
+  <xs:element name="Form" type="FormType" />
+  
+
+  <xs:complexType name="FrameworkElementType">
+    
+  </xs:complexType>
+
+  <xs:complexType name="SimpleFrameworkType">
+    <xs:complexContent>
+      <xs:extension base="RenderedType">
+        
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TextAreaType">
+    <xs:complexContent>
+      <xs:extension base="InputType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SubmitButtonType">
+    <xs:complexContent>
+      <xs:extension base="SimpleFrameworkType">
+        <xs:attribute name="Value" use="optional" type="ExpressionType" default="" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="TextBoxType">
+    <xs:complexContent>
+      <xs:extension base="InputType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FormType">
+    <xs:complexContent>
+      <xs:extension base="FragmentType">
+        <xs:attribute name="Method" use="optional" type="FormMethodType" default="Post" /> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="InputType">
+    <xs:complexContent>
+      <xs:extension base="SimpleFrameworkType">
+        <xs:attribute name="Value" use="required" type="ExpressionType" />
+        <xs:attribute name="Converter" use="optional" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="LabelType">
+    <xs:complexContent>
+      <xs:extension base="SimpleFrameworkType">
+        <xs:attribute name="Content" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="RenderedType">
+    <xs:complexContent>
+      <xs:extension base="FrameworkElementType">
+        <xs:attributeGroup ref="BasicFragmentAttrs" />
+        <xs:attributeGroup ref="BasicHtmlAttrs" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FragmentType">
+    <xs:complexContent>
+      <xs:extension base="FrameworkElementType">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any namespace="##targetNamespace" />
+            <xs:any namespace="http://www.w3.org/1999/xhtml" />
+          </xs:choice>
+        </xs:sequence>
+        <xs:attributeGroup ref="BasicFragmentAttrs" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:attributeGroup name="BasicHtmlAttrs">
+    <xs:attribute name="id" type="xs:ID"/>
+    <xs:attribute name="class" type="xs:NMTOKENS"/>
+    <xs:attribute name="style" type="StyleSheet"/>
+    <xs:attribute name="title" type="Text"/>
+  </xs:attributeGroup>
+
+  <xs:simpleType name="StyleSheet">
+    <xs:annotation>
+      <xs:documentation>
+        style sheet data
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="Text">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="FormMethodType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Post" />
+      <xs:enumeration value="Get" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="ExpressionType">
+    <xs:restriction base="xs:token">
+      
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="BasicFragmentAttrs">
+    <xs:attribute name="Rendered" type="ExpressionType" use="optional" default="True" />
+  </xs:attributeGroup>
+  
+</xs:schema>

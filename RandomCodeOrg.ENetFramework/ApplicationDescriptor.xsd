@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ApplicationDescriptor"
+    targetNamespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
+    elementFormDefault="qualified"
+    xmlns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
+    xmlns:mstns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+
+  <xs:element name="ApplicationDescriptor" type="ApplicationDescriptorType">
+    <xs:unique name="oneConfigurationPerName">
+      <xs:selector xpath="mstns:Configuration"/>
+      <xs:field xpath="@Name"/>
+    </xs:unique>
+  </xs:element>
+
+
+
+  <xs:complexType name="ApplicationDescriptorType" >
+    <xs:sequence maxOccurs="1">
+      <xs:element name="Information" maxOccurs="1" type="ApplicationInformationType" />
+      <xs:element name="Configuration" minOccurs="0" maxOccurs="unbounded" type="ConfigurationType" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ApplicationInformationType">
+    <xs:sequence maxOccurs="1">
+      <xs:element name="Title" type="xs:string" maxOccurs="1" />
+      <xs:element name="Description" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="CompilationType">
+    <xs:all maxOccurs="1">
+      <xs:element name="References" type="AssembliesType" minOccurs="0" maxOccurs="1">
+        <xs:unique name="oneReferencePerAssemblyName">
+          <xs:selector xpath="mstns:Assembly"/>
+          <xs:field xpath="@Name"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="Namespaces" type="NamespacesType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="Extensions" type="CompilationExtensionsType" minOccurs="0" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="NamespacesType">
+    <xs:sequence maxOccurs="1">
+      <xs:element name="Import" type="xs:token" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AssembliesType">
+    <xs:sequence maxOccurs="1">
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="Assembly" type="AssemblyType" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AssemblyType">
+    <xs:attribute name="Name" use="required"/>
+    <xs:attribute name="Location" use="optional" />
+  </xs:complexType>
+  
+  <xs:complexType name="ConfigurationType">
+    <xs:sequence maxOccurs="1">
+      <xs:element type="CompilationType" name="Compilation" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" use="optional" default="Default"/>
+  </xs:complexType>
+
+  <xs:complexType name="CompilationExtensionsType">
+    <xs:sequence maxOccurs="1">
+      <xs:element name="Type" type="TypeImportType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TypeImportType">
+    <xs:complexContent>
+      <xs:extension base="TypeType">
+        <xs:attribute name="IncludePrivate" type="xs:boolean" default="false" />
+        <xs:attribute name="IncludeProtected" type="xs:boolean" default="false" />
+        <xs:attribute name="IncludePublic" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="TypeType">
+    <xs:attribute name="Name" type="xs:token" use="required" />
+  </xs:complexType>
+
+
+</xs:schema>

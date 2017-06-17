@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<Form xmlns="http://randomcodeorg.github.com/ENetFramework">
+
+  <TextBox Value="Hallo" Converter="ccc" />
+
+  <SubmitButton Value="Test"/>
+  
+</Form>

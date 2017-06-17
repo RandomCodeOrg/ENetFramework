@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+xmlns="http://www.w3.org/1999/xhtml"
+xmlns:net="http://randomcodeorg.github.com/ENetFramework">
+<head>
+    <title>Hallo</title>
+    <link href="Resources/Style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <net:Fragment rendered="True">
+        <h1><net:Text Content="$homeController.WelcomeMessage()$" /></h1>
+        <p>Normaler p-tag</p>
+        <net:Label Content="Net-Label" style="color: red;" />
+        <net:Text Content="Net-Text standalone" />
+        <h2>
+            <net:Text Content="Net-Text in H2" />
+        </h2>
+        <net:Text Content="Aktuell: $DateTime.Now$" />
+        <net:Text Content="&lt;script&gt;alert(&quot;Hello World!&quot;);&lt;/script&gt;" />
+        <net:Form Rendered="$!sessionController.IsAuthenticated$">
+            <net:TextBox Value="$Binding(sessionController, 'Name')$" />
+            <net:SubmitButton Value="Senden!" />
+        </net:Form>
+
+        <net:Text Content="$homeController.WelcomeMessage()$" />
+    </net:Fragment>
+
+    <net:Fragment Rendered="$sessionController.IsAuthenticated$">
+        <h1>Ihr Name: <net:Text Content="$sessionController.Name$" /></h1>
+    </net:Fragment>
+
+</body>
+</html>
