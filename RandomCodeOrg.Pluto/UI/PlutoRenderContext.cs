@@ -1,6 +1,7 @@
 ﻿using NHttp;
 using RandomCodeOrg.ENetFramework.Statements;
 using RandomCodeOrg.ENetFramework.UI;
+using RandomCodeOrg.Pluto.Resources;
 using RandomCodeOrg.Pluto.Statements;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace RandomCodeOrg.Pluto.UI {
 
         private readonly HttpRequest request;
 
-        public PlutoRenderContext(PlutoStatementParser parser, HttpRequest request) {
+        public PlutoRenderContext(PlutoStatementParser parser, HttpRequest request, ApplicationResourceManager resourceManager) {
             this.psp = parser;
             this.request = request;
             resolutionRegistry = new PlutoResolutionRegistry(psp, requestedResolutions, requestedIterationVariables);
@@ -42,6 +43,7 @@ namespace RandomCodeOrg.Pluto.UI {
             Register(new InputElementRenderer("SubmitButton", "submit"));
             Register(new FormRenderer());
             Register(new IterationRenderer());
+            Register(new IncludeRenderer(resourceManager));
         }
 
 
@@ -67,13 +69,22 @@ namespace RandomCodeOrg.Pluto.UI {
         }
         
 
-        protected void Prepare(XmlDocument document, XmlElement element) {
+        public void Prepare(XmlDocument document, XmlElement element) {
+            List<XmlElement> children = new List<XmlElement>();
+
+            foreach(XmlNode child in element.ChildNodes) {
+                if(child is XmlElement) {
+                    children.Add(child.As<XmlElement>());
+                }
+            }
+            
             if ("http://randomcodeorg.github.com/ENetFramework".Equals(element.NamespaceURI)) {
                 if (renderer.ContainsKey(element.LocalName)) {
                     renderer[element.LocalName].Prepare(element, resolutionRegistry);
                 }
             }
-            foreach(XmlNode childNode in element.ChildNodes) {
+           
+            foreach(XmlNode childNode in children) {
                 if (childNode is XmlElement)
                     Prepare(document, childNode.As<XmlElement>());
             }
@@ -81,7 +92,6 @@ namespace RandomCodeOrg.Pluto.UI {
 
         
         
-
 
         public void Render(XmlDocument document, XmlElement element) {
 

@@ -21,13 +21,9 @@ namespace RandomCodeOrg.Pluto.Resources {
         public ViewSource(Stream stream) {
             document = new XmlDocument();
             document.Load(stream);
-            Compile();
         }
 
-
-        protected void Compile() {
-
-        }
+        
 
     }
 }

@@ -15,6 +15,9 @@ namespace RandomCodeOrg.Mercury.Controllers {
         [Inject]
         private ILogger logger;
 
+        [Inject]
+        private ISessionController sessionController;
+
         private int number;
 
         public int RequestNumber {
@@ -29,10 +32,10 @@ namespace RandomCodeOrg.Mercury.Controllers {
 
         public string Name {
             get {
-                return name;
+                return sessionController.Name;
             }
             set {
-                name = value;
+                sessionController.Name = value;
             }
         }
 

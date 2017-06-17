@@ -112,6 +112,7 @@
     <Compile Include="UI\FormRenderer.cs" />
     <Compile Include="UI\FragmentRenderer.cs" />
     <Compile Include="UI\FrameworkRendererBase.cs" />
+    <Compile Include="UI\IncludeRenderer.cs" />
     <Compile Include="UI\InputElementRenderer.cs" />
     <Compile Include="UI\IterationRenderer.cs" />
     <Compile Include="UI\IterationVariableRequest.cs" />

@@ -21,7 +21,7 @@ namespace RandomCodeOrg.Mercury.Controllers {
         public string WelcomeMessage() {
             logger.Trace("Backing method was called...");
             int number = RequestController.RequestNumber;
-            return string.Format("Herzlich Willkommen {0} Verbindungs-Nr #{1}", RequestController.Name, number);
+            return string.Format("Welcome '{0}' - Connection number #{1}", RequestController.Name, number);
         }
 
 

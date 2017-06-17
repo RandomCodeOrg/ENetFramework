@@ -71,7 +71,7 @@ namespace RandomCodeOrg.Pluto.Http {
 
                 var doc = (XmlDocument)view.Document.Clone();
 
-                UI.PlutoRenderContext renderContext = new UI.PlutoRenderContext(statementParser, e.Request);
+                UI.PlutoRenderContext renderContext = new UI.PlutoRenderContext(statementParser, e.Request, resourceManager);
 
                 renderContext.Render(doc);
 

@@ -106,7 +106,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="application.xml" />
-    <Content Include="Views\test.xml" />
+    <EmbeddedResource Include="Includes\HtmlBodyInclude.xml" />
+    <EmbeddedResource Include="Includes\HtmlHeaders.xml" />
+    <EmbeddedResource Include="Includes\Layout\Header.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

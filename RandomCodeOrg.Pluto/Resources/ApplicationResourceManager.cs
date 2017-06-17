@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using slf4net;
+using System.Xml;
 
 namespace RandomCodeOrg.Pluto.Resources {
     public class ApplicationResourceManager {
         
         private readonly string homePath;
         private readonly string resourcesPath;
+        private readonly string includesPath;
         private readonly string viewsPath;
         private readonly string applicationName;
 
         private readonly IDictionary<string, ViewSource> views = new Dictionary<string, ViewSource>();
+        private readonly IDictionary<string, XmlDocument> includeDocuments = new Dictionary<string, XmlDocument>();
 
         public string HomePath {
             get {
@@ -30,6 +33,7 @@ namespace RandomCodeOrg.Pluto.Resources {
         }
 
         private readonly ILogger logger = LoggerFactory.GetLogger(typeof(ApplicationResourceManager));
+        
 
         public ApplicationResourceManager(string serverPath, string applicationName) {
             this.applicationName = applicationName;
@@ -38,6 +42,9 @@ namespace RandomCodeOrg.Pluto.Resources {
             this.resourcesPath = Path.Combine(homePath, "Resources");
             this.viewsPath = Path.Combine(homePath, "Views");
             Directory.CreateDirectory(resourcesPath);
+            Directory.CreateDirectory(viewsPath);
+            this.includesPath = Path.Combine(homePath, "Includes");
+            Directory.CreateDirectory(includesPath);
         }
 
 
@@ -50,12 +57,29 @@ namespace RandomCodeOrg.Pluto.Resources {
                 return views[path];
             return null;
         }
+    
+        public XmlDocument IncludeDocument(string path) {
+            if (path.StartsWith("/")) path = path.Substring(1);
+            string localPath = Path.Combine(includesPath, path);
+            localPath = Path.GetFullPath(localPath);
+            if (!includeDocuments.ContainsKey(localPath) && File.Exists(localPath) && localPath.EndsWith(".xml")) {
+                using(FileStream fs = new FileStream(localPath, FileMode.Open)) {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(fs);
+                    includeDocuments[localPath] = doc;
+                }
+            }
+            if (!includeDocuments.ContainsKey(localPath))
+                return null;
+            return (XmlDocument) includeDocuments[localPath].CloneNode(true);
+        }
 
 
         public void Load(Assembly assembly) {
             string basePrefix = assembly.GetName().Name;
             string resourcePrefix = basePrefix + ".Resources.";
             string viewsPrefix = basePrefix + ".Views.";
+            string includesPrefix = basePrefix + ".Includes.";
             string targetPath;
             foreach (string resource in assembly.GetManifestResourceNames()) {
                 if (resource.StartsWith(resourcePrefix)) {
@@ -67,8 +91,13 @@ namespace RandomCodeOrg.Pluto.Resources {
                     targetPath = LoadResource(assembly, viewsPath, viewsPrefix, resource);
                     LoadView(assembly, viewsPrefix, resource);
                 }
+                if (resource.StartsWith(includesPrefix)) {
+                    logger.Debug("Discovered include: {0}", resource);
+                    LoadResource(assembly, includesPath, includesPrefix, resource);
+                }
             }
         }
+        
 
         protected void LoadView(Assembly assembly, string prefix, string resourceKey) {
             string resourcePath = BuildResourcePath(prefix, resourceKey);
@@ -82,7 +111,7 @@ namespace RandomCodeOrg.Pluto.Resources {
             if (!Directory.Exists(Path.GetDirectoryName(targetPath)))
                 Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
             using(Stream input = assembly.GetManifestResourceStream(resourceKey)) {
-                using (Stream output = new FileStream(targetPath, FileMode.OpenOrCreate, FileAccess.Write)) {
+                using (Stream output = new FileStream(targetPath, FileMode.Create, FileAccess.Write)) {
                     input.CopyTo(output);
                 }
             }
