@@ -43,26 +43,32 @@ namespace RandomCodeOrg.Pluto.UI {
             return rendered;
         }
 
+
+        protected bool RecurseChildren(IRenderContext context, XmlDocument doc, XmlElement element) {
+            bool result = false;
+            List<XmlElement> children = new List<XmlElement>();
+
+            foreach (XmlNode node in element.ChildNodes) {
+                if (node is XmlElement)
+                    children.Add(node.As<XmlElement>());
+            }
+
+            foreach (XmlElement child in children) {
+                result = result | Recurse(context, doc, child);
+            }
+
+            return result;
+        }
+
         protected bool Recurse(IRenderContext context, XmlDocument doc, XmlElement element) {
             bool result = false;
-            XmlElement e;
-            foreach (XmlNode child in element.ChildNodes) {
-                if (child is XmlElement) {
-                    e = (XmlElement)child;
-                    if ("http://randomcodeorg.github.com/ENetFramework".Equals(e.NamespaceURI)) {
-                        result = true;
-                        context.Render(doc, e);
-                    }
-                }
+
+            if ("http://randomcodeorg.github.com/ENetFramework".Equals(element.NamespaceURI)) {
+                result = true;
+                context.Render(doc, element);
             }
-            if (result)
-                return true;
-            foreach (XmlNode child in element.ChildNodes) {
-                if (child is XmlElement) {
-                    result = result | Recurse(context, doc, (XmlElement)child);
-                }
-            }
-            return result;
+
+            return result | RecurseChildren(context, doc, element);
         }
 
         public void ReplaceWithChildren(XmlElement element) {
@@ -92,11 +98,11 @@ namespace RandomCodeOrg.Pluto.UI {
             foreach (XmlNode child in source.ChildNodes) {
                 children.Add(child);
             }
-            foreach(XmlNode child in children) {
+            foreach (XmlNode child in children) {
                 target.AppendChild(child);
             }
         }
-        
+
 
         protected XmlText MakeHtmlText(string content, XmlNode parent, XmlElement current = null) {
             XmlText element = parent.OwnerDocument.CreateTextNode(content);
@@ -116,7 +122,7 @@ namespace RandomCodeOrg.Pluto.UI {
             }
 
         }
-        
+
         protected void SetAttribute(XmlElement element, string key, string value) {
             if (element.HasAttribute("key")) {
                 element.Attributes[key].Value = value;
@@ -150,6 +156,6 @@ namespace RandomCodeOrg.Pluto.UI {
                 return null;
             return element.Attributes[attribute].Value;
         }
-        
+
     }
 }

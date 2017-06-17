@@ -10,11 +10,13 @@ namespace RandomCodeOrg.Pluto.Statements {
 
         private readonly IEnumerable<CompiledToken> enumerable;
 
+        private IDictionary<string, object> variables;
+
         public CompiledStatementCollection(IEnumerable<CompiledToken> tokens) {
             this.enumerable = tokens;
         }
 
-        public override object Evaluate() {
+        protected override object DoEvaluate() {
             StringBuilder sb = new StringBuilder();
             foreach(CompiledToken ct in enumerable) {
                 sb.AppendFormat("{0}", Evaluate(ct));
@@ -24,10 +26,16 @@ namespace RandomCodeOrg.Pluto.Statements {
 
         protected object Evaluate(CompiledToken compiledToken) {
             try {
-                return compiledToken.Evaluate();
+                return compiledToken.Evaluate(variables);
             }catch(NoResultException) {
                 return string.Empty;
             }
+        }
+
+
+        protected override void SetVariables(IDictionary<string, object> variables) {
+            base.SetVariables(variables);
+            this.variables = variables;
         }
 
     }

@@ -113,6 +113,8 @@
     <Compile Include="UI\FragmentRenderer.cs" />
     <Compile Include="UI\FrameworkRendererBase.cs" />
     <Compile Include="UI\InputElementRenderer.cs" />
+    <Compile Include="UI\IterationRenderer.cs" />
+    <Compile Include="UI\IterationVariableRequest.cs" />
     <Compile Include="UI\LabelRenderer.cs" />
     <Compile Include="UI\PlutoRenderContext.cs" />
     <Compile Include="UI\PlutoResolutionRegistry.cs" />

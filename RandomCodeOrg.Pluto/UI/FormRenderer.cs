@@ -36,7 +36,7 @@ namespace RandomCodeOrg.Pluto.UI {
             CopyChildren(element, form);
             SetAttribute(form, HTML_METHOD_ATTRIBUTE, method);
 
-            Recurse(context, doc, element);
+            RecurseChildren(context, doc, form);
 
             Remove(element);
 

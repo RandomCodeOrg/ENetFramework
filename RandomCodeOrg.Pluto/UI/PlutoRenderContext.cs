@@ -20,7 +20,9 @@ namespace RandomCodeOrg.Pluto.UI {
 
         private readonly IDictionary<string, object> performedResolutions = new Dictionary<string, object>();
 
+        private readonly IDictionary<string, object> variables = new Dictionary<string, object>();
         private readonly ISet<string> requestedResolutions = new HashSet<string>();
+        private readonly IList<IterationVariableRequest> requestedIterationVariables = new List<IterationVariableRequest>();
 
         private readonly IResolutionRegistry resolutionRegistry;
 
@@ -32,14 +34,14 @@ namespace RandomCodeOrg.Pluto.UI {
         public PlutoRenderContext(PlutoStatementParser parser, HttpRequest request) {
             this.psp = parser;
             this.request = request;
-            resolutionRegistry = new PlutoResolutionRegistry(psp, requestedResolutions);
+            resolutionRegistry = new PlutoResolutionRegistry(psp, requestedResolutions, requestedIterationVariables);
             Register(new FragmentRenderer());
             Register(new LabelRenderer());
             Register(new TextRenderer());
             Register(new TextBoxRenderer());
             Register(new InputElementRenderer("SubmitButton", "submit"));
             Register(new FormRenderer());
-            
+            Register(new IterationRenderer());
         }
 
 
@@ -77,9 +79,18 @@ namespace RandomCodeOrg.Pluto.UI {
             }
         }
 
+        
+        
 
 
         public void Render(XmlDocument document, XmlElement element) {
+
+            if ("http://randomcodeorg.github.com/ENetFramework".Equals(element.NamespaceURI)) {
+                if (renderer.ContainsKey(element.LocalName)) {
+                    renderer[element.LocalName].Render(this, document, element);
+                }
+            }
+
             List<XmlElement> children = new List<XmlElement>();
             foreach (XmlNode node in element.ChildNodes) {
                 if (node is XmlElement)
@@ -88,13 +99,13 @@ namespace RandomCodeOrg.Pluto.UI {
 
             foreach (XmlElement childElement in children) {
 
-                Render(document, childElement);
-                if ("http://randomcodeorg.github.com/ENetFramework".Equals(childElement.NamespaceURI)) {
+                /*if ("http://randomcodeorg.github.com/ENetFramework".Equals(childElement.NamespaceURI)) {
                     if (renderer.ContainsKey(childElement.LocalName)) {
                         renderer[childElement.LocalName].Render(this, document, childElement);
                     }
                 }
-
+                Render(document, childElement);*/
+                Render(document, childElement);
             }
             List<XmlAttribute> toDelete = new List<XmlAttribute>();
             foreach(XmlAttribute attr in document.DocumentElement.Attributes) {
@@ -150,11 +161,41 @@ namespace RandomCodeOrg.Pluto.UI {
 
 
         protected void PerformResolution() {
-            foreach (string requested in requestedResolutions) {
-                CompiledToken compiled = psp.Compile(requested);
-                tokens[requested] = compiled;
-                performedResolutions[requested] = compiled.Evaluate();
+            object source;
+            IDictionary<string, Type> locals = new Dictionary<string, Type>();
+
+            foreach (IterationVariableRequest varRequest in requestedIterationVariables) {
+                source = PerformResolution(locals, varRequest.SourceStatement);
+                Type varType = GetIterationVariableType(source);
+                locals[varRequest.VariableName] = varType;
             }
+            foreach (string requested in requestedResolutions) {
+                PerformResolution(locals, requested);
+            }
+        }
+
+        protected Type GetIterationVariableType(object sourceValue) {
+            if (sourceValue == null)
+                return typeof(object);
+            Type sourceType = sourceValue.GetType();
+            if (sourceType.IsArray) {
+                return sourceType.GetElementType();
+            }
+            if (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
+                return sourceType.GetGenericArguments()[0];
+            }
+            throw new Exception("Not iterable."); // TODO: Throw specific exception.
+        }
+
+        protected object PerformResolution(IDictionary<string, Type> locals, string requested) {
+            if (tokens.ContainsKey(requested))
+                return performedResolutions[requested];
+            
+            CompiledToken compiled = psp.Compile(locals, requested);
+            tokens[requested] = compiled;
+            object result = compiled.Evaluate(variables);
+            performedResolutions[requested] = result;
+            return result;
         }
 
         public T Resolve<T>(string statement) {
@@ -173,16 +214,16 @@ namespace RandomCodeOrg.Pluto.UI {
             if (tokens.ContainsKey(statement)) {
                 compiled = tokens[statement];
             } else {
-                compiled = psp.Compile(statement);
-                tokens[statement] = compiled;
+                return (T) (object) statement;
             }
             
             if (compiled != null) {
-                object result = compiled.Evaluate();
+                object result = compiled.Evaluate(variables);
                 if(result is IBinding) {
                     result = result.As<IBinding>().GetValue();
-                }
-                if (typeof(T).IsAssignableFrom(typeof(string)) && result != null && !(result is string)) {
+                }else if (result != null && typeof(T).IsAssignableFrom(result.GetType())) {
+                    return (T)result;
+                } else if (typeof(T).IsAssignableFrom(typeof(string)) && result != null && !(result is string)) {
                     return (T)(object)string.Format("{0}", result);
                 }
                 return (T)result;
@@ -220,6 +261,15 @@ namespace RandomCodeOrg.Pluto.UI {
                 current = current.ParentNode;
             }
             return string.Format("param{0}",sb.ToString().GetHashCode());*/
+        }
+
+        public void PushVariable(string name, object value) {
+            variables[name] = value;
+        }
+
+        public void PopVariable(string name) {
+            if (variables.ContainsKey(name))
+                variables.Remove(name);
         }
     }
 }

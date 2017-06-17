@@ -26,7 +26,11 @@ xmlns:net="http://randomcodeorg.github.com/ENetFramework">
         <net:Text Content="$homeController.WelcomeMessage()$" />
     </net:Fragment>
 
-    <net:Fragment Rendered="$sessionController.IsAuthenticated$">
+    <net:Iteration Value="$string[] arr = new string[10]; for(int i=0; i&lt;arr.Length; i++) { arr[i] = 'index' + i + ' ' + sessionController.Name; } return arr;$" Variable="e" >
+        <p><net:Text Content="Entry: $e$" /></p>
+    </net:Iteration>
+
+    <net:Fragment>
         <h1>Ihr Name: <net:Text Content="$sessionController.Name$" /></h1>
     </net:Fragment>
 

@@ -70,7 +70,7 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
             return string.Format("{0}.GeneratedStatement{1}", targetNamespace, key);
         }
 
-        public string Build(bool insertReturn, string targetNamespace) {
+        public string Build(bool insertReturn, IDictionary<string, Type> variables, string targetNamespace) {
             StringBuilder sb = new StringBuilder();
             foreach (string nsp in namespaces) {
                 sb.AppendFL("using {0};", nsp);
@@ -81,6 +81,9 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
             foreach(Type t in cdi.GetInjectableTypes()) {
                 sb.TabbedLine(2, "[{0}]", injectAttributeName);
                 sb.TabbedLine(2, "private {0} {1};", t.FullName, cdi.GetIdentifier(t));
+            }
+            foreach(string name in variables.Keys) {
+                sb.TabbedLine(2, "public {0} {1};", variables[name].FullName, name);
             }
             sb.AppendLine();
             sb.TabbedLine(2, "protected override object DoEvaluate() {");

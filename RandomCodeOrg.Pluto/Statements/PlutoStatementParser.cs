@@ -21,9 +21,9 @@ namespace RandomCodeOrg.Pluto.Statements {
         }
 
         
-        public CompiledToken Compile(string value) {
+        public CompiledToken Compile(IDictionary<string, Type> variables, string value) {
            
-            return Parse(value).Compile(compiler);
+            return Parse(value).Compile(variables, compiler);
         }
 
         public RootToken Parse(string value) {

@@ -21,7 +21,7 @@ namespace RandomCodeOrg.Pluto.UI {
             if (!CheckRendered(context, element))
                 return;
 
-            Recurse(context, doc, element);
+            RecurseChildren(context, doc, element);
             ReplaceWithChildren(element);
         }
 

@@ -13,10 +13,17 @@ namespace RandomCodeOrg.Pluto.UI {
 
         private readonly ISet<string> statementsToResolve;
         private readonly PlutoStatementParser parser;
+        private readonly IList<IterationVariableRequest> iterationVariableRequests;
 
-        public PlutoResolutionRegistry(PlutoStatementParser parser, ISet<string> statementsToResolve) {
+        public PlutoResolutionRegistry(PlutoStatementParser parser, ISet<string> statementsToResolve, IList<IterationVariableRequest> iterationVariableRequests) {
             this.statementsToResolve = statementsToResolve;
             this.parser = parser;
+            this.iterationVariableRequests = iterationVariableRequests;
+        }
+
+        public void RequestIterationVariable(string typeSource, string name) {
+            iterationVariableRequests.Add(new IterationVariableRequest(typeSource, name));
+            RequestResolution(typeSource);
         }
 
         public bool RequestResolution(string statement) {
@@ -28,5 +35,8 @@ namespace RandomCodeOrg.Pluto.UI {
             }
             return false;
         }
+
+
+
     }
 }

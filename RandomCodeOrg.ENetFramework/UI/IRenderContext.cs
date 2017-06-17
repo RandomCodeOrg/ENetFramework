@@ -16,7 +16,9 @@ namespace RandomCodeOrg.ENetFramework.UI {
 
         string BuildParmeterName(XmlElement element, string parameterStatement);
 
+        void PushVariable(string name, object value);
 
+        void PopVariable(string name);
 
     }
 }

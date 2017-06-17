@@ -9,5 +9,8 @@ namespace RandomCodeOrg.ENetFramework.UI {
 
         bool RequestResolution(string statement);
 
+
+        void RequestIterationVariable(string typeSource, string name);
+
     }
 }

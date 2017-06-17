@@ -14,6 +14,7 @@
   <xs:element name="TextArea" type="TextAreaType" />
   <xs:element name="SubmitButton" type="SubmitButtonType" />
   <xs:element name="Form" type="FormType" />
+  <xs:element name="Iteration" type="IterationType" />
   
 
   <xs:complexType name="FrameworkElementType">
@@ -50,6 +51,16 @@
     </xs:complexContent>
   </xs:complexType>
 
+  
+  <xs:complexType name="IterationType">
+    <xs:complexContent>
+      <xs:extension base="FragmentType">
+        <xs:attribute name="Value" use="required" type="ExpressionType" />
+        <xs:attribute name="Variable" use="required" type="xs:token" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+      
   <xs:complexType name="FormType">
     <xs:complexContent>
       <xs:extension base="FragmentType">

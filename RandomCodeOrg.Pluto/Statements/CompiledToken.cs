@@ -5,22 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RandomCodeOrg.Pluto.Statements {
-    public class CompiledToken {
+    public abstract class CompiledToken {
 
-        private readonly Func<object> function;
         
-
-        public CompiledToken(Func<object> function) {
-            this.function = function;
-        }
-
         protected CompiledToken() {
 
         }
 
-        public virtual object Evaluate() {
-            return function();
+        public object Evaluate(IDictionary<string, object> variables) {
+            SetVariables(variables);
+            return DoEvaluate();
+        }
+
+        protected abstract object DoEvaluate();
+
+        protected virtual void SetVariables(IDictionary<string, object> variables) {
+
         }
 
     }
+
+    public class CompiledLiteralToken : CompiledToken {
+
+        private readonly object value;
+
+        public CompiledLiteralToken(object value) {
+            this.value = value;
+        }
+
+        protected override object DoEvaluate() {
+            return value;
+        }
+    }
+
 }

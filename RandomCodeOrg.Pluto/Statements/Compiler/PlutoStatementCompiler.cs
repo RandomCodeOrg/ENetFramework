@@ -95,17 +95,17 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
 
 
 
-        private void Compile(string[] namespacesToImport, CSharpCodeProvider csc, CompilerParameters parameters, StatementBuilder builder) {
+        private void Compile(string[] namespacesToImport, IDictionary<string, Type> variables, CSharpCodeProvider csc, CompilerParameters parameters, StatementBuilder builder) {
             CompilerResults compilerResult;
             builder.Using(namespacesToImport);
-            string source = builder.Build(true, targetNamespace);
+            string source = builder.Build(true, variables, targetNamespace);
             compilerResult = csc.CompileAssemblyFromSource(parameters, source);
             if (!compilerResult.Errors.HasErrors) {
                 var assem = compilerResult.CompiledAssembly;
                 compilationResult[builder.Fragment] = RetrieveType(compilerResult, builder);
                 return;
             }
-            source = builder.Build(false, targetNamespace);
+            source = builder.Build(false, variables, targetNamespace);
             compilerResult = csc.CompileAssemblyFromSource(parameters, source);
             if (!compilerResult.Errors.HasErrors) {
                 compilationResult[builder.Fragment] = RetrieveType(compilerResult, builder);
@@ -121,7 +121,7 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
         }
         
 
-        public Type Compile(string fragment) {
+        public Type Compile(IDictionary<string, Type> variables, string fragment) {
             if (compilationResult.ContainsKey(fragment))
                 return compilationResult[fragment];
             Process(fragment);
@@ -130,12 +130,12 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
             var codeProvider = CreateCodeProvider();
             var parameters = CreateParameters();
             
-            Compile(namespaces.ToArray(), codeProvider, parameters, sb);
+            Compile(namespaces.ToArray(), variables, codeProvider, parameters, sb);
 
             return compilationResult[fragment];
         }
 
-        public void Compile() {
+        public void Compile(IDictionary<string, Type> variables) {
             var csc = CreateCodeProvider();
             var parameters = CreateParameters();
            
@@ -144,7 +144,7 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
             var result = new Dictionary<string, Type>();
 
             foreach(StatementBuilder builder in statementBuilders.Values) {
-                Compile(namespacesToImport, csc, parameters, builder);
+                Compile(namespacesToImport, variables, csc, parameters, builder);
             }
             
         }

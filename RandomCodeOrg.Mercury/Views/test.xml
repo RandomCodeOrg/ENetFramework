@@ -3,6 +3,10 @@
 
   <TextBox Value="Hallo" Converter="ccc" />
 
+  <Iteration Value="$iterable$" Variable="element" >
+    <Text Content="$element$"  />
+  </Iteration>
+  
   <SubmitButton Value="Test"/>
   
 </Form>
