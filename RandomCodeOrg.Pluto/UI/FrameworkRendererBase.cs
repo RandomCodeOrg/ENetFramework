@@ -77,7 +77,7 @@ namespace RandomCodeOrg.Pluto.UI {
                 children.Add(child);
             }
             foreach (XmlNode child in children) {
-                element.ParentNode.AppendChild(child);
+                element.ParentNode.InsertBefore(child, element);
             }
             element.ParentNode.RemoveChild(element);
         }
