@@ -12,29 +12,24 @@ namespace RandomCodeOrg.Mercury.Controllers {
     [ApplicationScoped]
     public class HomeController {
 
-        [Inject]
-        public IRequestController RequestController { get; set; }
-
+        
         [Inject]
         private ILogger logger;
+        
+        private DateTime constructed;
 
-        public string WelcomeMessage() {
-            logger.Trace("Backing method was called...");
-            int number = RequestController.RequestNumber;
-            return string.Format("Welcome '{0}' - Connection number #{1}", RequestController.Name, number);
+        public DateTime Constructed {
+            get {
+                return constructed;
+            }
         }
-
-
+        
         [PostConstruct]
         public void Initialize() {
             logger.Trace("Controller constructed...");
+            constructed = DateTime.Now;
         }
-
-
-        [PostConstruct]
-        public void InvalidInitialize(object smth) {
-            logger.Info("ahll");
-        }
+        
 
     }
 }

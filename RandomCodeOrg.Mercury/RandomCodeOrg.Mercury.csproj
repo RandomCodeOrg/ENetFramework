@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IRequestController.cs" />
-    <Compile Include="Controllers\RequestController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -101,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="application.xml" />
+    <EmbeddedResource Include="Views\Examples\Index.xml" />
     <EmbeddedResource Include="Views\Index.xml" />
     <EmbeddedResource Include="Includes\Layout\Layout.xml" />
     <EmbeddedResource Include="Includes\HtmlBodyInclude.xml" />

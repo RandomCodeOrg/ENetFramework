@@ -11,8 +11,8 @@ namespace RandomCodeOrg.Mercury.Controllers {
     
 
         string Name { get; set; }
-
-        bool IsAuthenticated { get; }
+        
+        string WelcomeMessage { get; }
 
     }
 
@@ -24,12 +24,18 @@ namespace RandomCodeOrg.Mercury.Controllers {
 
         public string Name { get; set; }
 
-        public bool IsAuthenticated {
+        [Inject]
+        private HomeController homeController;
+
+        public string WelcomeMessage {
             get {
-                return !string.IsNullOrWhiteSpace(Name);
+                string yourName = "Guest";
+                if (!string.IsNullOrEmpty(Name)) {
+                    yourName = Name;
+                }
+                return string.Format("Welcome '{0}'! Version: {1}", yourName, homeController.Constructed);
             }
         }
-        
 
     }
 }
