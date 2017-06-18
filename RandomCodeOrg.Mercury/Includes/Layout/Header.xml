@@ -5,10 +5,13 @@
     <nav>
       <ul class="nav nav-pills pull-right">
         <li role="presentation" class="active">
-          <a href="#">Home</a>
+          <a href="/#framework">Home</a>
         </li>
         <li role="presentation">
-          <a href="#pluto">Pluto</a>
+          <a href="/#pluto">Pluto</a>
+        </li>
+        <li role="presentation">
+          <a href="/Examples">Examples</a>
         </li>
         <li role="presentation">
           <a href="https://github.com/RandomCodeOrg/ENetFramework" target="_blank">Github</a>
