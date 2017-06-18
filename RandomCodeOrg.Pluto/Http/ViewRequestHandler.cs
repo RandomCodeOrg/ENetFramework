@@ -113,7 +113,7 @@ namespace RandomCodeOrg.Pluto.Http {
             current = localPath + "index.xml";
             if (resourceManager.HasView(current))
                 return current;
-            current = localPath + "Index.html";
+            current = localPath + "Index.xml";
             if (resourceManager.HasView(current))
                 return current;
             return null;
