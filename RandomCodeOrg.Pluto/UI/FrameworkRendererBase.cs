@@ -84,7 +84,7 @@ namespace RandomCodeOrg.Pluto.UI {
 
 
         protected XmlElement MakeHtmlTag(string tag, XmlNode parent, XmlElement current = null) {
-            XmlElement element = parent.OwnerDocument.CreateElement(tag, "http://www.w3.org/1999/xhtml");
+            XmlElement element = parent.OwnerDocument.CreateElement(tag, "http://randomcodeorg.github.com/ENetFramework/xhtml");
             if (current == null) {
                 parent.AppendChild(element);
             } else {

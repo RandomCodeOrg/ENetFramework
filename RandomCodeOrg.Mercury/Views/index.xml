@@ -1,54 +1,51 @@
-﻿<!DOCTYPE html>
-<html lang="en"
-xmlns="http://www.w3.org/1999/xhtml"
-xmlns:net="http://randomcodeorg.github.com/ENetFramework">
-<head>
-    <title>ENetFramework</title>
-    <net:Include Source="/HtmlHeaders.xml" />
-</head>
-<body>
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<net:Composition
+  Source="/Layout/Layout.xml"
+  xmlns="http://randomcodeorg.github.com/ENetFramework/xhtml"
+  xmlns:net="http://randomcodeorg.github.com/ENetFramework" >
 
-    <div class="container">
 
-        <net:Include Source="Layout/Header.xml" />
-        <net:Fragment Rendered="True">
-            <h1><net:Text Content="$homeController.WelcomeMessage()$" /></h1>
-            <p>Normaler p-tag</p>
-            <net:Label Content="Net-Label" style="color: red;" />
-            <net:Text Content="Net-Text standalone" />
-            <h2>
-                <net:Text Content="Net-Text in H2" />
-            </h2>
-            <net:Text Content="Aktuell: $DateTime.Now$" />
-            <net:Text Content="&lt;script&gt;alert(&quot;Hello World!&quot;);&lt;/script&gt;" />
-            <net:Form>
-                <net:TextBox Value="$Binding(sessionController, 'Name')$" />
-                <net:SubmitButton Value="Senden!" />
-            </net:Form>
+  <net:Substitution Placeholder="TitlePlaceholder">
+    ENetFramework - Welcome
+  </net:Substitution>
+  
+  <net:Substitution Placeholder="ContentPlaceholder">
 
-            <net:Text Content="$homeController.WelcomeMessage()$" />
-        </net:Fragment>
+    <net:Fragment Rendered="True">
+      <h1>
+        <net:Text Content="$homeController.WelcomeMessage()$" />
+      </h1>
+      <p>Normaler p-tag</p>
+      <net:Label Content="Net-Label" style="color: red;" />
+      <net:Text Content="Net-Text standalone" />
+      <h2>
+        <net:Text Content="Net-Text in H2" />
+      </h2>
+      <net:Text Content="Aktuell: $DateTime.Now$" />
+      <net:Text Content="&lt;script&gt;alert(&quot;Hello World!&quot;);&lt;/script&gt;" />
+      <net:Form>
+        <net:TextBox Value="$Binding(sessionController, 'Name')$" />
+        <net:SubmitButton Value="Senden!" />
+      </net:Form>
 
-        <net:Iteration Value="$string[] arr = new string[100]; for(int i=0; i&lt;arr.Length; i++) { arr[i] = 'index' + i + ' ' + sessionController.Name; } return arr;$" Variable="e">
-            <p><net:Text Content="Entry: $e$" /></p>
-        </net:Iteration>
+      <net:Text Content="$homeController.WelcomeMessage()$" />
+    </net:Fragment>
 
-        <net:Fragment>
-            <h1>Ihr Name: <net:Text Content="$sessionController.Name$" /></h1>
-        </net:Fragment>
+    <net:Iteration Value="$string[] arr = new string[100]; for(int i=0; i&lt;arr.Length; i++) { arr[i] = 'index' + i + ' ' + sessionController.Name; } return arr;$" Variable="e">
+      <p>
+        <net:Text Content="Entry: $e$" />
+      </p>
+    </net:Iteration>
 
-        <h2 id="pluto">Pluto - An application server</h2>
-        Pluto is an
+    <net:Fragment>
+      <h1>
+        Ihr Name: <net:Text Content="$sessionController.Name$" />
+      </h1>
+    </net:Fragment>
 
-        <footer class="footer">
-            RandomCodeOrg, <net:Text Content="$DateTime.Now.ToShortDateString()$" />
-        </footer>
-
-    </div>
-
+    <h2 id="pluto">Pluto - An application server</h2>
+    Pluto is an
     
+  </net:Substitution>
 
-    <net:Include Source="/HtmlBodyInclude.xml" />
-
-</body>
-</html>
+</net:Composition>

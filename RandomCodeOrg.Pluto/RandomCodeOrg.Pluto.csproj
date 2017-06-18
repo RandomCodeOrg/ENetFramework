@@ -109,6 +109,7 @@
     <Compile Include="Statements\RootToken.cs" />
     <Compile Include="Statements\StatementToken.cs" />
     <Compile Include="Statements\Token.cs" />
+    <Compile Include="UI\CompositionRenderer.cs" />
     <Compile Include="UI\FormRenderer.cs" />
     <Compile Include="UI\FragmentRenderer.cs" />
     <Compile Include="UI\FrameworkRendererBase.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="UI\LabelRenderer.cs" />
     <Compile Include="UI\PlutoRenderContext.cs" />
     <Compile Include="UI\PlutoResolutionRegistry.cs" />
+    <Compile Include="UI\RecycleException.cs" />
     <Compile Include="UI\TextAreaRenderer.cs" />
     <Compile Include="UI\TextBoxRenderer.cs" />
     <Compile Include="UI\TextRenderer.cs" />

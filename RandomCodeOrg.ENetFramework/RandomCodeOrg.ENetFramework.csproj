@@ -63,9 +63,13 @@
     <Compile Include="UI\IFrameworkRenderer.cs" />
     <Compile Include="UI\IRenderContext.cs" />
     <Compile Include="UI\IResolutionRegistry.cs" />
+    <Compile Include="UI\RenderException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ApplicationDescriptor.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ENetFrameworkXhtml.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="ENetFramework.xsd">

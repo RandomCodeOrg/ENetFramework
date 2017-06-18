@@ -23,6 +23,8 @@ namespace RandomCodeOrg.Pluto.UI {
                 XmlNode toImport = element.OwnerDocument.ImportNode(doc.DocumentElement, true);
                 element.ParentNode.InsertBefore(toImport, element);
                 element.ParentNode.RemoveChild(element);
+            }else {
+                throw new RenderException(string.Format("The file to include ({0}) could not be found.", element.GetAttribute("Source")));
             }
         }
 

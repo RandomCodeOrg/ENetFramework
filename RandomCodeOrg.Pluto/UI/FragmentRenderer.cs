@@ -9,7 +9,7 @@ using RandomCodeOrg.ENetFramework.UI;
 namespace RandomCodeOrg.Pluto.UI {
     public class FragmentRenderer : FrameworkRendererBase {
 
-        public FragmentRenderer() : base("Fragment") {
+        public FragmentRenderer() : base("Fragment", "Placeholder") {
 
         }
 

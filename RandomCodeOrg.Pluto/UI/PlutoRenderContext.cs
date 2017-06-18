@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace RandomCodeOrg.Pluto.UI {
     public class PlutoRenderContext : IRenderContext {
@@ -44,54 +45,72 @@ namespace RandomCodeOrg.Pluto.UI {
             Register(new FormRenderer());
             Register(new IterationRenderer());
             Register(new IncludeRenderer(resourceManager));
+            Register(new CompositionRenderer(resourceManager));
+            
         }
 
 
         public void Render(XmlDocument document) {
-            Prepare(document, document.DocumentElement);
+            Prepare(document);
             PerformResolution();
             Refresh();
-            Render(document, document.DocumentElement);
+            DoRender(document);
         }
 
+        protected void DoRender(XmlDocument document) {
+            Render(document, document.DocumentElement);
+            document.DocumentElement.SetAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+        }
+
+
+
+        protected void Prepare(XmlDocument document) {
+            try {
+                Prepare(document, document.DocumentElement);
+            } catch (RecycleException e) {
+                Prepare(e.Element.OwnerDocument, e.Element);
+            }
+        }
+
+
         protected void Refresh() {
-            foreach(object resolvedValue in performedResolutions.Values) {
-                if(resolvedValue is IBinding) {
+            foreach (object resolvedValue in performedResolutions.Values) {
+                if (resolvedValue is IBinding) {
                     IBinding binding = resolvedValue.As<IBinding>();
                     string identifier = binding.Identifier;
                     if (request.Form.AllKeys.Contains(identifier)) {
                         binding.SetValue(request.Params[identifier]);
-                    }else if (request.QueryString.AllKeys.Contains(identifier)) {
+                    } else if (request.QueryString.AllKeys.Contains(identifier)) {
                         binding.SetValue(request.QueryString[identifier]);
                     }
                 }
             }
         }
-        
+
 
         public void Prepare(XmlDocument document, XmlElement element) {
             List<XmlElement> children = new List<XmlElement>();
 
-            foreach(XmlNode child in element.ChildNodes) {
-                if(child is XmlElement) {
+            foreach (XmlNode child in element.ChildNodes) {
+                if (child is XmlElement) {
                     children.Add(child.As<XmlElement>());
                 }
             }
-            
+
             if ("http://randomcodeorg.github.com/ENetFramework".Equals(element.NamespaceURI)) {
                 if (renderer.ContainsKey(element.LocalName)) {
                     renderer[element.LocalName].Prepare(element, resolutionRegistry);
                 }
             }
-           
-            foreach(XmlNode childNode in children) {
+
+            foreach (XmlNode childNode in children) {
                 if (childNode is XmlElement)
                     Prepare(document, childNode.As<XmlElement>());
             }
         }
 
-        
-        
+
+
 
         public void Render(XmlDocument document, XmlElement element) {
 
@@ -108,25 +127,19 @@ namespace RandomCodeOrg.Pluto.UI {
             }
 
             foreach (XmlElement childElement in children) {
-
-                /*if ("http://randomcodeorg.github.com/ENetFramework".Equals(childElement.NamespaceURI)) {
-                    if (renderer.ContainsKey(childElement.LocalName)) {
-                        renderer[childElement.LocalName].Render(this, document, childElement);
-                    }
-                }
-                Render(document, childElement);*/
                 Render(document, childElement);
             }
             List<XmlAttribute> toDelete = new List<XmlAttribute>();
-            foreach(XmlAttribute attr in document.DocumentElement.Attributes) {
+            foreach (XmlAttribute attr in document.DocumentElement.Attributes) {
                 if (attr.Name.StartsWith("xmlns:"))
                     toDelete.Add(attr);
             }
             foreach (XmlAttribute attr in toDelete)
                 document.DocumentElement.RemoveAttribute(attr.Name);
+
         }
 
-
+        /*
         protected bool Recurse(IRenderContext context, XmlDocument doc, XmlElement element) {
             bool result = false;
             XmlElement e;
@@ -148,6 +161,7 @@ namespace RandomCodeOrg.Pluto.UI {
             }
             return result;
         }
+        */
 
         public void Register(ENetFramework.UI.IFrameworkRenderer renderer) {
             foreach (string supportedElement in renderer.SupportedElements) {
@@ -200,7 +214,7 @@ namespace RandomCodeOrg.Pluto.UI {
         protected object PerformResolution(IDictionary<string, Type> locals, string requested) {
             if (tokens.ContainsKey(requested))
                 return performedResolutions[requested];
-            
+
             CompiledToken compiled = psp.Compile(locals, requested);
             tokens[requested] = compiled;
             object result = compiled.Evaluate(variables);
@@ -224,28 +238,28 @@ namespace RandomCodeOrg.Pluto.UI {
             if (tokens.ContainsKey(statement)) {
                 compiled = tokens[statement];
             } else {
-                return (T) (object) statement;
+                return (T)(object)statement;
             }
-            
+
             if (compiled != null) {
                 object result = compiled.Evaluate(variables);
-                if(result is IBinding) {
+                if (result is IBinding) {
                     result = result.As<IBinding>().GetValue();
-                }else if (result != null && typeof(T).IsAssignableFrom(result.GetType())) {
+                } else if (result != null && typeof(T).IsAssignableFrom(result.GetType())) {
                     return (T)result;
                 } else if (typeof(T).IsAssignableFrom(typeof(string)) && result != null && !(result is string)) {
                     return (T)(object)string.Format("{0}", result);
                 }
                 return (T)result;
             }
-            
+
             throw new Exception("Throw meaningful exception...");
         }
 
         public string BuildParmeterName(XmlElement element, string parameterStatement) {
             if (performedResolutions.ContainsKey(parameterStatement)) {
                 object statementResult = performedResolutions[parameterStatement];
-                if(statementResult is IBinding) {
+                if (statementResult is IBinding) {
                     IBinding binding = statementResult.As<IBinding>();
                     return binding.Identifier;
                 }
