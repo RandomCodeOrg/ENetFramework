@@ -12,3 +12,11 @@ Planned features...
 * RESTful Webservices
 
 <sub>*) The corresponding Java technology is given in parentheses</sub>
+
+## Anatomy of this solution
+The Solution in this respository contains three projects. The one called 'RandomCodeOrg.ENetFramework' is the API, intended to be used by programmers developing a web application based on this framework. An example for such an application is given by the 'RandomCodeOrg.Mercury' project. The third project ('RandomCodeOrg.Pluto') is a reference implementation of an application container that can host ENetFramwork-based applications.
+
+## Getting started
+1. Clone this repository
+2. Open the solution
+3. Run the contained project 'RandomCodeOrg.Mercury'
