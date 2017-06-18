@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<net:Composition
+  Source="/Layout/Layout.xml"
+  xmlns="http://randomcodeorg.github.com/ENetFramework/xhtml"
+  xmlns:net="http://randomcodeorg.github.com/ENetFramework" >
+
+
+
+
+  <net:Substitution Placeholder="TitlePlaceholder">
+    ENetFramework - Examples
+  </net:Substitution>
+
+
+  <net:Substitution Placeholder="ContentPlaceholder">
+
+    <net:Fragment>
+    <h1>CDI</h1>
+    <p>ENetFramework supports context and dependency injection. Resources annotated with the Managed-Attribute, can be injected into other resources. There are three available scopes that are</p>
+    <ul>
+      <li>
+        <b>ApplicationScoped</b>: The resource is created once the application starts and destroyed when the owning application shuts down.
+      </li>
+      <li>
+        <b>SessionScoped</b>: Instances of a session scoped resource are created once per user session and disposed when the owning session ends.
+      </li>
+      <li>
+        <b>RequestScoped</b>: Request scoped resources are created at the beginng of a request cycle and destroyed after the request cycle completed.
+      </li>
+    </ul>
+    <p>
+      Every resource that is either session or application scoped, must be defined by an interface. This interface should then be implemented by a class that provides a default constructor and is annotated with [Managed] and the desired scope attribute.
+    </p>
+    <p>
+      A resource can be used by injecting it into another resource. This can be accomplished by anotating a field or property with an [Inject] attribute. The type of the field/property must match the (inferface) type of the resource to be injected.
+    </p>
+
+    <h2>Example</h2>
+    
+    <pre class="prettyprint">
+public interface IRequestController {
+
+  int RequestNumber { get; }
+
+}
+
+[Managed]
+[RequestScoped]
+internal class RequestController : IRequestController {
+
+  private static int requestCounter = 0;
+
+  [Inject]
+  private ILogger logger;
+
+  private int number;
+
+  public int RequestNumber {
+    get {
+      return number;
+    }
+  }
+
+  [PostConstruct]
+  public void Init() {
+    number = requestCounter++;
+    logger.Debug("This is the controller for request #{0} speaking...", number);
+  }
+
+
+  [OnDispose]
+  private void Destroy() {
+    logger.Debug("... request controller #{0}: over and out!");
+  }
+
+}
+    </pre>
+
+    <p>
+      <b>Output</b>: <net:Text Content="RequestNumber = $requestController.RequestNumber$" />
+  </p>
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js" type="text/javascript">/** **/</script>
+
+    </net:Fragment>
+
+    <net:Fragment>
+      <h1>Views</h1>
+      <p>
+        A view is a XML file placed within the "Views" folder. The XML file is the markup of the user interface which uses plain old html tags in combination with <i>"new"</i> framework elements. There are two relevant namespaced to be used:
+      </p>
+      <ul>
+        <li>
+          <b>xmlns="http://randomcodeorg.github.com/ENetFramework/xhtml"</b> A modified version of the xhtml schema, that allows the new framework elements to be nested within standard html elements.
+        </li>
+        <li>
+          <b>xmlns:net="http://randomcodeorg.github.com/ENetFramework"</b> The schema defining the framework elements.
+        </li>
+      </ul>
+
+      <p>Some framework elements can use expression statements to execute arbitrary C# code or access a backing resouce.</p>
+      <p>
+        The <code>&lt;net:Text /&gt;</code> element, for example, defines an attribute named "Content" which may uses an expression statement.
+        <code>&lt;net:Text Content="Current Time: $DateTime.Now$" /&gt;</code>, would render a text starting with "Current Time: " followed by the actual current time.
+      </p>
+      <p>
+        <b>Example Output:</b>&#160;<net:Text Content="Current Time: $DateTime.Now$"/>
+      </p>
+      <p>
+        The syntax follows the given pseudo definition: <code>([Text]{0-1}[Code]{0-1}){0-*}</code>
+      </p>
+      <p>
+        A code block starts and ends with a <code>$</code> character. It can be preceeded and followed by zero or more text and code blocks. The content of a code block can be arbitrary C# code that may or may not return a value, that will then be concatenated with the other text blocks or code block results.
+      </p>
+      <p>
+       The semicolon (<code>;</code>) or <code>return</code> statement can be omitted if a block of code only contains a single coherent line. Also note that a single quote character
+       <code>'</code> is treated like a double quote character <code>"</code>. This convention was made to avoid the need of replacing the double quote character with its XML entity (<code>&amp;quot;</code>).
+      </p>
+      <p>The following table demonstrates the concepts of expression statements by comparing them to the equivalent C# code:</p>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Expression Statement</th>
+            <th>C# Code</th>
+            <th>Evaluation Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!--<tr>
+            <td>
+              <code></code>
+            </td>
+            <td>
+              <code class="prettypring lang-cs"></code>
+            </td>
+          </tr>-->
+          <tr>
+            <td>
+              <code>My name is $person1.Name$</code>
+            </td>
+            <td>
+              <code class="prettyprint lang-cs">return "My name is " + person1.Name;</code>
+            </td>
+            <td>
+              <i>My name is Erica Example</i>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>$person1.Name.ToLower()$</code>
+            </td>
+            <td>
+              <code class="prettyprint lang-cs">return person1.Name.ToLower();</code>
+            </td>
+            <td>
+              <i>erica example</i>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>$someObject.SomeVoidMethod()$</code>
+            </td>
+            <td>
+              <code class="prettyprint lang-cs">someObject.SomeVoidMethod();</code>
+            </td>
+            <td>
+              
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>'Hello World'.ToUpper() = $'Hello World'.ToUpper()$</code>
+            </td>
+            <td>
+              <code class="prettyprint lang-cs">return "'Hello World'.ToUpper() = " + "Hello World".ToUpper();</code>
+            </td>
+            <td>
+              <i>
+                'Hello World'.ToUpper() = HELLO WORLD
+              </i>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Foo $DateTime.Now$ Bar</code>
+            </td>
+            <td>
+              <code class="prettyprint lang-cs">return "Foo " + DateTime.Now + " Bar";</code>
+            </td>
+            <td>
+              <i>
+                <net:Text Content="Foo $DateTime.Now$ Bar" />
+              </i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </net:Fragment>
+    
+  </net:Substitution>
+
+</net:Composition>
