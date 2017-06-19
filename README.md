@@ -22,6 +22,6 @@ The Solution in this respository contains three projects. The one called 'Random
 3. Run the contained project 'RandomCodeOrg.Mercury'
 
 ## Disclaimer
-s you might have noticed, this project is everything but ready for production. You are very welcome to use this framework for experimental/academic or "just for fun" purposes.
+As you might have noticed, this project is everything but ready for production. You are very welcome to use this framework for experimental/academic or "just for fun" purposes.
 
 I would appreciate every kind of contribution and feedback. Maybe we could then someday recommend this framework for production use...
