@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyLoader.cs" />
     <Compile Include="Container\ApplicationScopedAttribute.cs" />
     <Compile Include="Container\OnDisposeAttribute.cs" />
     <Compile Include="Container\InjectAttribute.cs" />
@@ -54,6 +55,8 @@
     <Compile Include="ENetFrameworkContext.cs" />
     <Compile Include="IApplicationContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ApplicationStartupConfig.cs" />
+    <Compile Include="StartupArgument.cs" />
     <Compile Include="Statements\IBinding.cs" />
     <Compile Include="Statements\IPath.cs" />
     <Compile Include="Statements\IStatement.cs" />
