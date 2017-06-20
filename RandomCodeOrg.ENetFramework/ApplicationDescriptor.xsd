@@ -4,8 +4,7 @@
     elementFormDefault="qualified"
     xmlns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
     xmlns:mstns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
->
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
   <xs:element name="ApplicationDescriptor" type="ApplicationDescriptorType">
@@ -14,7 +13,6 @@
       <xs:field xpath="@Name"/>
     </xs:unique>
   </xs:element>
-
 
 
   <xs:complexType name="ApplicationDescriptorType" >
@@ -45,6 +43,58 @@
     </xs:all>
   </xs:complexType>
 
+  <xs:complexType name="SessionConfigType">
+    <xs:all>
+      <xs:element name="Timeout" type="TimeType" maxOccurs="1" />
+      <xs:element name="CookieName" type="xs:token" maxOccurs="1" />
+      <xs:element name="MaxSessions" type="PositiveIntType" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:simpleType name="PositiveIntType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TimeUnitType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Hours" />
+      <xs:enumeration value="Minutes" />
+      <xs:enumeration value="Seconds" />
+      <xs:enumeration value="Milliseconds" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="TimeType">
+    <xs:attribute name="Value" type="xs:float" use="required" />
+    <xs:attribute name="Unit" type="TimeUnitType" use="optional" default="Minutes" />
+  </xs:complexType>
+
+  <xs:complexType name="NavigationType">
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="Welcome" type="PathDefaultsType" minOccurs="0" maxOccurs="1" />
+      <xs:element type="NavigationRuleType" name="Rule" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NavigationRuleType">
+    <xs:sequence minOccurs="1" maxOccurs="1">
+      <xs:element name="Target" minOccurs="1" maxOccurs="1" />
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="FromPath" type="xs:anyURI" minOccurs="1" maxOccurs="unbounded"  />
+        <xs:element name="FromOutcome" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="PathDefaultsType">
+    <xs:sequence>
+      <xs:element name="Alternative" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="NamespacesType">
     <xs:sequence maxOccurs="1">
       <xs:element name="Import" type="xs:token" minOccurs="0" maxOccurs="unbounded"/>
@@ -61,11 +111,13 @@
     <xs:attribute name="Name" use="required"/>
     <xs:attribute name="Location" use="optional" />
   </xs:complexType>
-  
+
   <xs:complexType name="ConfigurationType">
-    <xs:sequence maxOccurs="1">
+    <xs:all maxOccurs="1">
       <xs:element type="CompilationType" name="Compilation" minOccurs="0" maxOccurs="1" />
-    </xs:sequence>
+      <xs:element type="NavigationType" name="Navigation" minOccurs="0" maxOccurs="1" />
+      <xs:element type="SessionConfigType" name="Session" minOccurs="0" maxOccurs="1" />
+    </xs:all>
     <xs:attribute name="Name" type="xs:string" use="optional" default="Default"/>
   </xs:complexType>
 
@@ -84,7 +136,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="TypeType">
     <xs:attribute name="Name" type="xs:token" use="required" />
   </xs:complexType>
