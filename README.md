@@ -2,7 +2,7 @@
 
 The ENetFramework is an API that can be used to develop web applications in .Net using/borrowing your favorite JavaEE techniques.
 
-Features currently supported by the reference implementation...*
+Features currently supported by the reference implementation*
 * Context and Dependency Injection (CDI)
 * Framework Views (Java Server Faces - JSF)
 * Expression Statements (Expression Language - EL)
