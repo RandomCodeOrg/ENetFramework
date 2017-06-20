@@ -15,4 +15,8 @@
     <copyright>Copyright 2017</copyright>
     <tags>ENetFramework Web</tags>
   </metadata>
+  <files>
+	<file src="ENetFramework.xsd" target="content/Framework" />
+	<file src="ENetFrameworkXhtml.xsd" target="content/Framework" />
+  </files>
 </package>

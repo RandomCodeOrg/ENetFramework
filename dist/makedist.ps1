@@ -1,5 +1,6 @@
 $ErrorActionPreference = "Stop"
 
+nuget restore ../
 msbuild ../ENetFramework.sln
 
 rm ./*.nupkg
