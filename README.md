@@ -1,4 +1,4 @@
-# ENetFramework
+# ENetFramework [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 The ENetFramework is an API that can be used to develop web applications in .Net using/borrowing your favorite JavaEE techniques.
 
