@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using RandomCodeOrg.ENetFramework;
 using slf4net;
 using NHttp;
-
+using RandomCodeOrg.Pluto.Health;
 
 namespace RandomCodeOrg.Pluto {
     public class PlutoApplicationContainer : IApplicationContainer {
@@ -21,6 +21,8 @@ namespace RandomCodeOrg.Pluto {
         private HttpServer server;
 
         private readonly string homePath;
+
+        private readonly ApplicationValidator validator = new ApplicationValidator();
 
         public string HomePath {
             get {
@@ -46,11 +48,26 @@ namespace RandomCodeOrg.Pluto {
         }
         
         public void Deploy(Assembly assembly) {
+            logger.Info("Validating {0}...", assembly.FullName);
+            var report = validator.Validate(assembly);
+            string message = report.GetPrintableString();
+            if (report.HasErrors) {
+                logger.Error(message);
+            }else if (report.HasWarnings) {
+                logger.Warn(message);
+            }else {
+                logger.Info(message);
+            }
+            if (report.HasErrors)
+                throw new ApplicationValidationException(string.Format("The application failed validation.\n\n{0}", message));
+
+
             PlutoApplicationContext application = new PlutoApplicationContext(this, assembly);
             applications.Add(application);
             application.Start();
         }
 
+        
 
         public void Shutdown() {
             logger.Info("Shutting down the application container...");

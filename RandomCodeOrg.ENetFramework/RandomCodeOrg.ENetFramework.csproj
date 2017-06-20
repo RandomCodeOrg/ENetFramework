@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationValidationException.cs" />
     <Compile Include="AssemblyLoader.cs" />
     <Compile Include="Container\ApplicationScopedAttribute.cs" />
     <Compile Include="Container\OnDisposeAttribute.cs" />
@@ -51,8 +52,12 @@
     <Compile Include="Container\ScopeAttribute.cs" />
     <Compile Include="Container\SessionScopedAttribute.cs" />
     <Compile Include="Container\ViewScopedAttribute.cs" />
+    <Compile Include="Discovered.cs" />
     <Compile Include="ENetFrameworkApplication.cs" />
     <Compile Include="ENetFrameworkContext.cs" />
+    <Compile Include="Http\IRequest.cs" />
+    <Compile Include="Http\IRequestContext.cs" />
+    <Compile Include="Http\IRequestListener.cs" />
     <Compile Include="IApplicationContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ApplicationStartupConfig.cs" />
@@ -79,5 +84,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

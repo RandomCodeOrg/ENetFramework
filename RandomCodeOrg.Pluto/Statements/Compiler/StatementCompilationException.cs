@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RandomCodeOrg.ENetFramework.Statements;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RandomCodeOrg.Pluto.Statements.Compiler {
-    public class StatementCompilationException : Exception {
+    public class StatementCompilationException : StatementParseException {
 
 
         private readonly IReadOnlyCollection<CompilerError> compilerErrors;
