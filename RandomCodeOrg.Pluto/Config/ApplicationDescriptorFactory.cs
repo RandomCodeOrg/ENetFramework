@@ -1,6 +1,7 @@
 ﻿using slf4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -21,16 +22,19 @@ namespace RandomCodeOrg.Pluto.Config {
 
 
         public ApplicationDescriptorType ReadDescriptor(Assembly assembly) {
-            ApplicationDescriptorType result = null;
-
             var stream = assembly.GetManifestResourceStream(APPDESCRIPTOR_RESOURCE_NAME);
+            return ReadDescriptor(stream, false);
+        }
+
+        public ApplicationDescriptorType ReadDescriptor(Stream stream, bool leaveOpen = false) {
+            ApplicationDescriptorType result = null;
             if (stream != null) {
-                using (stream) {
-                    XmlSerializer serializer = new XmlSerializer(typeof(ApplicationDescriptorType));
-                    object deserializationResult = serializer.Deserialize(stream);
-                    if (deserializationResult is ApplicationDescriptorType) {
-                        result = deserializationResult.As<ApplicationDescriptorType>();
+                if (!leaveOpen) {
+                    using (stream) {
+                        result = LoadDescriptor(stream);
                     }
+                } else {
+                    result = LoadDescriptor(stream);
                 }
             }
             if (result == null) // If deserialization failed or there is no app descriptor
@@ -40,8 +44,21 @@ namespace RandomCodeOrg.Pluto.Config {
             return result;
         }
 
+        protected ApplicationDescriptorType LoadDescriptor(Stream source) {
+            ApplicationDescriptorType result = null;
+            if (source != null) {
+                XmlSerializer serializer = new XmlSerializer(typeof(ApplicationDescriptorType));
+                object deserializationResult = serializer.Deserialize(source);
+                if (deserializationResult is ApplicationDescriptorType) {
+                    result = deserializationResult.As<ApplicationDescriptorType>();
+                }
+            }
+
+            return result;
+        }
+
         protected virtual void ApplyDefaults(ApplicationDescriptorType descriptor) {
-           
+
         }
 
 
