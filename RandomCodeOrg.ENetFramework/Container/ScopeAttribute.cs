@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace RandomCodeOrg.ENetFramework.Container {
+
+
+    /// <summary>
+    /// Provides the base class for all attributes that are used for scope definition.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public abstract class ScopeAttribute : Attribute {
 
