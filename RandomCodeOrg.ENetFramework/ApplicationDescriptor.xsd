@@ -4,11 +4,10 @@
     elementFormDefault="qualified"
     xmlns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
     xmlns:mstns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
->
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-  <xs:element name="ApplicationDescriptor" type="ApplicationDescriptorType">
+  <xs:element name="ApplicationDescriptor" type="ApplicationDescriptor">
     <xs:unique name="oneConfigurationPerName">
       <xs:selector xpath="mstns:Configuration"/>
       <xs:field xpath="@Name"/>
@@ -16,15 +15,14 @@
   </xs:element>
 
 
-
-  <xs:complexType name="ApplicationDescriptorType" >
+  <xs:complexType name="ApplicationDescriptor" >
     <xs:sequence maxOccurs="1">
-      <xs:element name="Information" maxOccurs="1" type="ApplicationInformationType" />
-      <xs:element name="Configuration" minOccurs="0" maxOccurs="unbounded" type="ConfigurationType" />
+      <xs:element name="Information" maxOccurs="1" type="ApplicationInformation" />
+      <xs:element name="Configuration" minOccurs="0" maxOccurs="unbounded" type="Configuration" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ApplicationInformationType">
+  <xs:complexType name="ApplicationInformation">
     <xs:sequence maxOccurs="1">
       <xs:element name="Title" type="xs:string" maxOccurs="1" />
       <xs:element name="Description" type="xs:string" minOccurs="0" maxOccurs="1" />
@@ -32,60 +30,114 @@
   </xs:complexType>
 
 
-  <xs:complexType name="CompilationType">
+  <xs:complexType name="CompilationConfiguration">
     <xs:all maxOccurs="1">
-      <xs:element name="References" type="AssembliesType" minOccurs="0" maxOccurs="1">
+      <xs:element name="References" type="AssemblyList" minOccurs="0" maxOccurs="1">
         <xs:unique name="oneReferencePerAssemblyName">
           <xs:selector xpath="mstns:Assembly"/>
           <xs:field xpath="@Name"/>
         </xs:unique>
       </xs:element>
-      <xs:element name="Namespaces" type="NamespacesType" minOccurs="0" maxOccurs="1" />
-      <xs:element name="Extensions" type="CompilationExtensionsType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="Namespaces" type="NamespaceList" minOccurs="0" maxOccurs="1" />
+      <xs:element name="Extensions" type="CompilationExtensions" minOccurs="0" maxOccurs="1" />
     </xs:all>
   </xs:complexType>
 
-  <xs:complexType name="NamespacesType">
+  <xs:complexType name="SessionConfiguration">
+    <xs:all>
+      <xs:element name="Timeout" type="Time" maxOccurs="1" />
+      <xs:element name="CookieName" type="xs:token" maxOccurs="1" />
+      <xs:element name="MaxSessions" type="PositiveInt" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:simpleType name="PositiveInt">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TimeUnit">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Hours" />
+      <xs:enumeration value="Minutes" />
+      <xs:enumeration value="Seconds" />
+      <xs:enumeration value="Milliseconds" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Time">
+    <xs:attribute name="Value" type="xs:float" use="required" />
+    <xs:attribute name="Unit" type="TimeUnit" use="optional" default="Minutes" />
+  </xs:complexType>
+
+  <xs:complexType name="NavigationConfiguration">
+    <xs:sequence minOccurs="1" maxOccurs="1">
+      <xs:element name="Welcome" type="PathDefaults" minOccurs="0" maxOccurs="1" />
+      <xs:element type="NavigationRule" name="Rule" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NavigationRule">
+    <xs:sequence minOccurs="1" maxOccurs="1">
+      <xs:element name="Target" minOccurs="1" maxOccurs="1" />
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="FromPath" type="xs:anyURI" minOccurs="1" maxOccurs="unbounded"  />
+        <xs:element name="FromOutcome" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="PathDefaults">
+    <xs:sequence>
+      <xs:element name="Alternative" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NamespaceList">
     <xs:sequence maxOccurs="1">
       <xs:element name="Import" type="xs:token" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="AssembliesType">
+  <xs:complexType name="AssemblyList">
     <xs:sequence maxOccurs="1">
-      <xs:element minOccurs="1" maxOccurs="unbounded" name="Assembly" type="AssemblyType" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="Assembly" type="AssemblyReference" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="AssemblyType">
+  <xs:complexType name="AssemblyReference">
     <xs:attribute name="Name" use="required"/>
     <xs:attribute name="Location" use="optional" />
   </xs:complexType>
-  
-  <xs:complexType name="ConfigurationType">
-    <xs:sequence maxOccurs="1">
-      <xs:element type="CompilationType" name="Compilation" minOccurs="0" maxOccurs="1" />
-    </xs:sequence>
+
+  <xs:complexType name="Configuration">
+    <xs:all maxOccurs="1">
+      <xs:element type="CompilationConfiguration" name="Compilation" minOccurs="0" maxOccurs="1" />
+      <xs:element type="NavigationConfiguration" name="Navigation" minOccurs="0" maxOccurs="1" />
+      <xs:element type="SessionConfiguration" name="Session" minOccurs="0" maxOccurs="1" />
+    </xs:all>
     <xs:attribute name="Name" type="xs:string" use="optional" default="Default"/>
   </xs:complexType>
 
-  <xs:complexType name="CompilationExtensionsType">
+  <xs:complexType name="CompilationExtensions">
     <xs:sequence maxOccurs="1">
-      <xs:element name="Type" type="TypeImportType" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="Type" type="TypeImport" minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="TypeImportType">
+  <xs:complexType name="TypeImport">
     <xs:complexContent>
-      <xs:extension base="TypeType">
+      <xs:extension base="TypeReference">
         <xs:attribute name="IncludePrivate" type="xs:boolean" default="false" />
         <xs:attribute name="IncludeProtected" type="xs:boolean" default="false" />
         <xs:attribute name="IncludePublic" type="xs:boolean" default="true" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
-  <xs:complexType name="TypeType">
+
+  <xs:complexType name="TypeReference">
     <xs:attribute name="Name" type="xs:token" use="required" />
   </xs:complexType>
 
