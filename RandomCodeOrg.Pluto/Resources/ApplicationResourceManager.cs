@@ -7,6 +7,8 @@ using System.Reflection;
 using System.IO;
 using slf4net;
 using System.Xml;
+using RandomCodeOrg.Pluto.Debugging;
+
 
 namespace RandomCodeOrg.Pluto.Resources {
     public class ApplicationResourceManager {
@@ -17,8 +19,18 @@ namespace RandomCodeOrg.Pluto.Resources {
         private readonly string viewsPath;
         private readonly string applicationName;
 
+        private readonly SourceChangeMonitor sourceChangeMonitor = new SourceChangeMonitor();
+
         private readonly IDictionary<string, ViewSource> views = new Dictionary<string, ViewSource>();
         private readonly IDictionary<string, XmlDocument> includeDocuments = new Dictionary<string, XmlDocument>();
+        
+
+
+        protected bool IsDebugging {
+            get {
+                return System.Diagnostics.Debugger.IsAttached;
+            }
+        }
 
         public string HomePath {
             get {
@@ -33,6 +45,7 @@ namespace RandomCodeOrg.Pluto.Resources {
         }
 
         private readonly ILogger logger = LoggerFactory.GetLogger(typeof(ApplicationResourceManager));
+        private readonly SourceFileFinder sff = new SourceFileFinder();
         
 
         public ApplicationResourceManager(string serverPath, string applicationName) {
@@ -80,24 +93,51 @@ namespace RandomCodeOrg.Pluto.Resources {
             string resourcePrefix = basePrefix + ".Resources.";
             string viewsPrefix = basePrefix + ".Views.";
             string includesPrefix = basePrefix + ".Includes.";
-            string targetPath;
             foreach (string resource in assembly.GetManifestResourceNames()) {
+                string targetPath;
                 if (resource.StartsWith(resourcePrefix)) {
                     logger.Debug("Discovered resource: {0}", resource);
-                    LoadResource(assembly, resourcesPath, resourcePrefix, resource);
-                }
-                if (resource.StartsWith(viewsPrefix)) {
+                    targetPath = LoadResource(assembly, resourcesPath, resourcePrefix, resource);
+                    MonitorResource(assembly, resource, (sender, resKey, filePath) => OnResourceChanged(sender, resKey, filePath, targetPath));
+                } else if (resource.StartsWith(viewsPrefix)) {
                     logger.Debug("Discovered view: {0}", resource);
                     targetPath = LoadResource(assembly, viewsPath, viewsPrefix, resource);
                     LoadView(assembly, viewsPrefix, resource);
+                    MonitorResource(assembly, resource, (sender, resKey, filePath) => OnViewChanged(sender, resKey, filePath, viewsPrefix));
+                    
                 }
                 if (resource.StartsWith(includesPrefix)) {
                     logger.Debug("Discovered include: {0}", resource);
-                    LoadResource(assembly, includesPath, includesPrefix, resource);
+                    targetPath = LoadResource(assembly, includesPath, includesPrefix, resource);
+                    MonitorResource(assembly, resource, (sender, resKey, filePath) => OnResourceChanged(sender, resKey, filePath, targetPath));
                 }
             }
         }
-        
+
+        private void MonitorResource(Assembly assembly, string source, SourceChangeMonitor.ResourceChangedDelegate callback) {
+            if (!IsDebugging)
+                return;
+            sourceChangeMonitor.Monitor(assembly, source, callback);
+        }
+
+        private void OnViewChanged(object sender, string resourceKey, string filePath, string prefix) {
+            logger.Info("Reloading modified view '{0}' from path: {1}", resourceKey, filePath);
+            string resourcePath = BuildResourcePath(prefix, resourceKey);
+            using (FileStream fs = new FileStream(filePath, FileMode.Open)) {
+                views[resourcePath] = new ViewSource(fs);
+            }
+        }
+
+        private void OnResourceChanged(object sender, string resourceKey, string filePath, string targetPath) {
+            logger.Info("Reloading modified resource '{0}' from path: {1}", resourceKey, filePath);
+            logger.Debug("Overwriting {0}...", targetPath);
+            using (FileStream input = new FileStream(filePath, FileMode.Open)) {
+                using (FileStream output = new FileStream(targetPath, FileMode.Create, FileAccess.Write)) {
+                    input.CopyTo(output);
+                }
+            }
+        }
+
 
         protected void LoadView(Assembly assembly, string prefix, string resourceKey) {
             string resourcePath = BuildResourcePath(prefix, resourceKey);

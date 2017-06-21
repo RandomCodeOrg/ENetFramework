@@ -53,7 +53,7 @@ namespace RandomCodeOrg.Pluto {
             logger.Info("Starting application '{0}' v{1}...", applicationName, assembly.GetName().Version);
             logger.Debug("Assembly location is: {0}", assembly.Location);
             logger.Debug("Application directory is: {0}", resourcesManager.HomePath);
-
+            
             mapping.Map("/resources/(.*)", resourcesManager.ResourcesPath + @"\{0}");
 
             resourcesManager.Load(assembly);
