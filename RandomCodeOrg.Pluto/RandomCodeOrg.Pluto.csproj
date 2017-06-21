@@ -76,6 +76,7 @@
     <Compile Include="CDI\ProxyImplementationBuilder.cs" />
     <Compile Include="CDI\ImplementationResolver.cs" />
     <Compile Include="Config\ApplicationDescriptor.cs" />
+    <Compile Include="Config\ApplicationDescriptorFactory.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Health\ApplicationValidator.cs" />
     <Compile Include="Health\IAttributeValidator.cs" />
