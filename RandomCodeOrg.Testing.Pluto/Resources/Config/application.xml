@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationDescriptor xmlns="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor">
+
+  <Information>
+    <Title>Mercury</Title>
+    <Description>
+      This is an example.
+    </Description>
+  </Information>
+
+  <Configuration>
+    
+    <Compilation>
+      <Namespaces>
+        <Import>System.Reflection</Import>
+        <Import>System.Collections</Import>
+        <Import>System.Collections.Generic</Import>
+      </Namespaces>
+    </Compilation>
+
+    <Navigation>
+      <Welcome>
+        <Alternative>Index.xml</Alternative>
+        <Alternative>index.xml</Alternative>
+        <Alternative>Index.html</Alternative>
+        <Alternative>index.html</Alternative>
+        <Alternative>Default.xml</Alternative>
+        <Alternative>default.xml</Alternative>
+        <Alternative>Default.html</Alternative>
+        <Alternative>default.html</Alternative>
+      </Welcome>
+      <Rule Name="Default Rule">
+        <Target>.*</Target>
+        <FromOutcome>Home</FromOutcome>
+      </Rule>
+    </Navigation>
+
+    <Session>
+      <Timeout Value="5" Unit="Minutes" />
+      <CookieName>session</CookieName>
+      <MaxSessions>100</MaxSessions>
+    </Session>
+
+  </Configuration>
+
+
+</ApplicationDescriptor>
