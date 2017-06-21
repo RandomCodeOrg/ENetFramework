@@ -51,7 +51,6 @@
     <Compile Include="Container\RequestScopedAttribute.cs" />
     <Compile Include="Container\ScopeAttribute.cs" />
     <Compile Include="Container\SessionScopedAttribute.cs" />
-    <Compile Include="Container\ViewScopedAttribute.cs" />
     <Compile Include="Discovered.cs" />
     <Compile Include="ENetFrameworkApplication.cs" />
     <Compile Include="ENetFrameworkContext.cs" />
