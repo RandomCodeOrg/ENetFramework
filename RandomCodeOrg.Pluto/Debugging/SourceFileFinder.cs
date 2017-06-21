@@ -48,7 +48,7 @@ namespace RandomCodeOrg.Pluto.Debugging {
         }
 
         protected string DoGetSourceLocation(Type type) {
-            return DoGetSourceLocation(type.Assembly, type.FullName);
+            return DoGetSourceLocation(type.Assembly, string.Format("{0}.cs", type.FullName));
         }
         
 
@@ -65,7 +65,6 @@ namespace RandomCodeOrg.Pluto.Debugging {
         protected string DoGetSourceLocation(Assembly assembly, string resourceKey) {
             string location = assembly.Location;
             string[] components = GetPathComponents(resourceKey);
-            logger.Debug("Try to find the sources for '{0}'...", resourceKey);
             string result;
             if (File.Exists(location)) {
                 location = Directory.GetParent(location).FullName;

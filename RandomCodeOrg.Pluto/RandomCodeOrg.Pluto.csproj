@@ -75,6 +75,8 @@
     <Compile Include="CDI\ProxyImplementation.cs" />
     <Compile Include="CDI\ProxyImplementationBuilder.cs" />
     <Compile Include="CDI\ImplementationResolver.cs" />
+    <Compile Include="Debugging\SourceChangeMonitor.cs" />
+    <Compile Include="Debugging\SourceFileFinder.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Health\ApplicationValidator.cs" />
     <Compile Include="Health\IAttributeValidator.cs" />
