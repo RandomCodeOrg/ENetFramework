@@ -26,6 +26,17 @@ You can
 2. Open the solution
 3. Run the contained project 'RandomCodeOrg.Mercury'
 
+# Contributors Wanted
+You think that this project has too little features and too many bugs? But you like the basic idea? Then don't hesitate to participate.
+**All** types of contribution are very welcome. For example, you could
+- create pull requests
+- report bugs
+- enhance the documentation
+- make own suggestions for new features
+- give us your feedback
+
+Feel free to contact us at enetframework@outlook.com
+
 ## Disclaimer
 As you might have noticed, this project is everything but ready for production. You are very welcome to use this framework for experimental/academic or "just for fun" purposes.
 
