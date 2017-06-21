@@ -21,15 +21,15 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    [System.Xml.Serialization.XmlRootAttribute("ApplicationDescriptor", Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor", IsNullable=false)]
-    public partial class ApplicationDescriptorType {
+    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor", IsNullable=false)]
+    public partial class ApplicationDescriptor {
         
-        private ApplicationInformationType informationField;
+        private ApplicationInformation informationField;
         
-        private ConfigurationType[] configurationField;
+        private Configuration[] configurationField;
         
         /// <remarks/>
-        public ApplicationInformationType Information {
+        public ApplicationInformation Information {
             get {
                 return this.informationField;
             }
@@ -40,7 +40,7 @@ namespace RandomCodeOrg.Pluto.Config {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Configuration")]
-        public ConfigurationType[] Configuration {
+        public Configuration[] Configuration {
             get {
                 return this.configurationField;
             }
@@ -56,7 +56,7 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class ApplicationInformationType {
+    public partial class ApplicationInformation {
         
         private string titleField;
         
@@ -89,14 +89,14 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class TimeType {
+    public partial class Time {
         
         private float valueField;
         
-        private TimeUnitType unitField;
+        private TimeUnit unitField;
         
-        public TimeType() {
-            this.unitField = TimeUnitType.Minutes;
+        public Time() {
+            this.unitField = TimeUnit.Minutes;
         }
         
         /// <remarks/>
@@ -112,8 +112,8 @@ namespace RandomCodeOrg.Pluto.Config {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        [System.ComponentModel.DefaultValueAttribute(TimeUnitType.Minutes)]
-        public TimeUnitType Unit {
+        [System.ComponentModel.DefaultValueAttribute(TimeUnit.Minutes)]
+        public TimeUnit Unit {
             get {
                 return this.unitField;
             }
@@ -127,7 +127,7 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public enum TimeUnitType {
+    public enum TimeUnit {
         
         /// <remarks/>
         Hours,
@@ -148,16 +148,16 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class SessionConfigType {
+    public partial class SessionConfiguration {
         
-        private TimeType timeoutField;
+        private Time timeoutField;
         
         private string cookieNameField;
         
         private int maxSessionsField;
         
         /// <remarks/>
-        public TimeType Timeout {
+        public Time Timeout {
             get {
                 return this.timeoutField;
             }
@@ -194,7 +194,7 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class NavigationRuleType {
+    public partial class NavigationRule {
         
         private object targetField;
         
@@ -270,15 +270,15 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class NavigationType {
+    public partial class NavigationConfiguration {
         
-        private string[][] welcomeField;
+        private string[] welcomeField;
         
-        private NavigationRuleType[] ruleField;
+        private NavigationRule[] ruleField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("Alternative", typeof(string), IsNullable=false)]
-        public string[][] Welcome {
+        [System.Xml.Serialization.XmlArrayItemAttribute("Alternative", IsNullable=false)]
+        public string[] Welcome {
             get {
                 return this.welcomeField;
             }
@@ -289,7 +289,7 @@ namespace RandomCodeOrg.Pluto.Config {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Rule")]
-        public NavigationRuleType[] Rule {
+        public NavigationRule[] Rule {
             get {
                 return this.ruleField;
             }
@@ -300,13 +300,13 @@ namespace RandomCodeOrg.Pluto.Config {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(TypeImportType))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(TypeImport))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class TypeType {
+    public partial class TypeReference {
         
         private string nameField;
         
@@ -328,7 +328,7 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class TypeImportType : TypeType {
+    public partial class TypeImport : TypeReference {
         
         private bool includePrivateField;
         
@@ -336,7 +336,7 @@ namespace RandomCodeOrg.Pluto.Config {
         
         private bool includePublicField;
         
-        public TypeImportType() {
+        public TypeImport() {
             this.includePrivateField = false;
             this.includeProtectedField = false;
             this.includePublicField = true;
@@ -385,7 +385,7 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class AssemblyType {
+    public partial class AssemblyReference {
         
         private string nameField;
         
@@ -420,17 +420,17 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class CompilationType {
+    public partial class CompilationConfiguration {
         
-        private AssemblyType[] referencesField;
+        private AssemblyReference[] referencesField;
         
         private string[] namespacesField;
         
-        private TypeImportType[] extensionsField;
+        private TypeImport[] extensionsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Assembly", IsNullable=false)]
-        public AssemblyType[] References {
+        public AssemblyReference[] References {
             get {
                 return this.referencesField;
             }
@@ -452,7 +452,7 @@ namespace RandomCodeOrg.Pluto.Config {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Type", IsNullable=false)]
-        public TypeImportType[] Extensions {
+        public TypeImport[] Extensions {
             get {
                 return this.extensionsField;
             }
@@ -468,22 +468,22 @@ namespace RandomCodeOrg.Pluto.Config {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://randomcodeorg.github.com/ENetFramework/ApplicationDescriptor")]
-    public partial class ConfigurationType {
+    public partial class Configuration {
         
-        private CompilationType compilationField;
+        private CompilationConfiguration compilationField;
         
-        private NavigationType navigationField;
+        private NavigationConfiguration navigationField;
         
-        private SessionConfigType sessionField;
+        private SessionConfiguration sessionField;
         
         private string nameField;
         
-        public ConfigurationType() {
+        public Configuration() {
             this.nameField = "Default";
         }
         
         /// <remarks/>
-        public CompilationType Compilation {
+        public CompilationConfiguration Compilation {
             get {
                 return this.compilationField;
             }
@@ -493,7 +493,7 @@ namespace RandomCodeOrg.Pluto.Config {
         }
         
         /// <remarks/>
-        public NavigationType Navigation {
+        public NavigationConfiguration Navigation {
             get {
                 return this.navigationField;
             }
@@ -503,7 +503,7 @@ namespace RandomCodeOrg.Pluto.Config {
         }
         
         /// <remarks/>
-        public SessionConfigType Session {
+        public SessionConfiguration Session {
             get {
                 return this.sessionField;
             }
