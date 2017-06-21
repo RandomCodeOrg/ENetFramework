@@ -57,8 +57,12 @@ namespace RandomCodeOrg.Pluto.Config {
             return result;
         }
 
+        /// <summary>
+        /// Asserts that all configuration elements are set by assigning defaults to properties that are <code>null</code>.
+        /// </summary>
+        /// <param name="descriptor">The application descriptor to complete.</param>
         protected virtual void ApplyDefaults(ApplicationDescriptor descriptor) {
-
+            //TODO: Implement
         }
 
 
