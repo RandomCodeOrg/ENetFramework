@@ -1,0 +1,1 @@
+﻿xsd ..\RandomCodeOrg.ENetFramework\ApplicationDescriptor.xsd /classes /language:CS /namespace:RandomCodeOrg.Pluto.Config /out:"..\RandomCodeOrg.Pluto\Config"
