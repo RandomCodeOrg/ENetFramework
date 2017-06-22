@@ -49,6 +49,8 @@ namespace RandomCodeOrg.Pluto.Http {
             if (!requestFilter.Filter(e))
                 return false;
             string localPath = e.Request.Path;
+            
+
             if (!resourceManager.HasView(localPath)) {
                 string current = FindIndex(localPath);
                 if (current == null)

@@ -8,6 +8,7 @@ using System.IO;
 
 
 namespace RandomCodeOrg.Pluto.Http.Mapping {
+
     public class PathMapping {
 
         public string this[Uri u] {
@@ -590,8 +591,8 @@ namespace RandomCodeOrg.Pluto.Http.Mapping {
         {".z", "application/x-compress"},
         {".zip", "application/x-zip-compressed"},
         #endregion
-
         };
+
 
 
 
@@ -616,14 +617,11 @@ namespace RandomCodeOrg.Pluto.Http.Mapping {
         }
 
         protected string BuildPath(string target, List<string> groups) {
-            for(int i=0; i<groups.Count; i++) {
+            for (int i = 0; i < groups.Count; i++) {
                 groups[i] = groups[i].Replace('/', Path.DirectorySeparatorChar);
             }
             string result = string.Format(target, groups.ToArray<string>());
-            if (File.Exists(result))
-                return result;
-            // TODO: Directory Traversal Attack
-            return null;
+            return result;
         }
 
 

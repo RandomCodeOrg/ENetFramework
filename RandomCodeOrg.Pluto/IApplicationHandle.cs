@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,7 +14,7 @@ namespace RandomCodeOrg.Pluto {
         /// <summary>
         /// Returns the applications namespace.
         /// </summary>
-        string ApplicationNamespace { get; } //TODO: EntryPoint or topmost T:ENetFrameworkApplication or topmost T:object
+        string ApplicationNamespace { get; }
 
         /// <summary>
         /// Provides the applications assembly.
@@ -23,24 +24,37 @@ namespace RandomCodeOrg.Pluto {
         /// <summary>
         /// Provides the applications readable name.
         /// </summary>
-        string FriendlyName { get; } //  assembly.GetName().Name;
+        string FriendlyName { get; }
 
         /// <summary>
         /// Provides the applications technical name.
         /// </summary>
-        string TechnicalName { get; } // assembly.GetName().Name;
+        string TechnicalName { get; }
 
         /// <summary>
         /// Returns the applications version.
         /// </summary>
-        string Version { get; } // assembly.GetName().Version
+        string Version { get; }
 
         /// <summary>
         /// Returns a path pointing to the location of this application.
         /// </summary>
-        string Location { get; } // assembly.Location
+        string Location { get; }
 
+        IReadOnlyCollection<string> ViewResources { get; }
 
+        IReadOnlyCollection<string> IncludeResources { get; }
+
+        IReadOnlyCollection<string> StaticResources { get; }
+        
+
+        string TranslateViewPath(string source);
+
+        string TranslateIncludePath(string resource);
+
+        string TranslateStaticPath(string resource);
+
+        Stream OpenResource(string identifier);
 
     }
 }

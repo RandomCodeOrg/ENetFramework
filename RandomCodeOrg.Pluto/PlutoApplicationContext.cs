@@ -47,8 +47,8 @@ namespace RandomCodeOrg.Pluto {
             this.container = container;
             requestFilter = new Http.Filters.ConstantRequestFilter(true);
             mapping = new Http.Mapping.PathMapping();
-            resourceHandler = new ResourceRequestHandler(requestFilter & new Http.Filters.PathRequestFilter("/resources/.*"), mapping);
-            resourcesManager = new Resources.ApplicationResourceManager(container.HomePath, appHandle.FriendlyName);
+            resourcesManager = new Resources.ApplicationResourceManager(applicationHandle);
+            resourceHandler = new ResourceRequestHandler(requestFilter & new Http.Filters.PathRequestFilter("/resources/.*"), mapping, resourcesManager);
             viewHandler = new ViewRequestHandler(requestFilter, resourcesManager, statementParser, contextManager, sessionManager);
 
         }
@@ -58,9 +58,9 @@ namespace RandomCodeOrg.Pluto {
             logger.Debug("Assembly location is: {0}", appHandle.Location);
             logger.Debug("Application directory is: {0}", resourcesManager.HomePath);
             
-            mapping.Map("/resources/(.*)", resourcesManager.ResourcesPath + @"\{0}");
+            mapping.Map("/resources/(.*)", resourcesManager.ResourcesPath + @"/{0}");
 
-            resourcesManager.Load(appHandle);
+            resourcesManager.Load();
 
             logger.Info("Starting CDI container...");
             cdiContainer.Load(appHandle.DefiningAssembly);
@@ -93,7 +93,6 @@ namespace RandomCodeOrg.Pluto {
             container.HandlerChain.Remove(resourceHandler);
             container.HandlerChain.Remove(viewHandler);
 
-            resourcesManager.Unload();
         }
 
 

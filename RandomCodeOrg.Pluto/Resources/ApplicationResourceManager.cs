@@ -12,7 +12,7 @@ using RandomCodeOrg.Pluto.Debugging;
 
 namespace RandomCodeOrg.Pluto.Resources {
     public class ApplicationResourceManager {
-        
+
         private readonly string homePath;
         private readonly string resourcesPath;
         private readonly string includesPath;
@@ -23,7 +23,8 @@ namespace RandomCodeOrg.Pluto.Resources {
 
         private readonly IDictionary<string, ViewSource> views = new Dictionary<string, ViewSource>();
         private readonly IDictionary<string, XmlDocument> includeDocuments = new Dictionary<string, XmlDocument>();
-        
+        private readonly IDictionary<string, MemoryStream> staticResources = new Dictionary<string, MemoryStream>();
+
 
 
         protected bool IsDebugging {
@@ -46,74 +47,104 @@ namespace RandomCodeOrg.Pluto.Resources {
 
         private readonly ILogger logger = LoggerFactory.GetLogger(typeof(ApplicationResourceManager));
         private readonly SourceFileFinder sff = new SourceFileFinder();
-        
 
-        public ApplicationResourceManager(string serverPath, string applicationName) {
-            this.applicationName = applicationName;
-            this.homePath = Path.Combine(serverPath, applicationName);
+        private IApplicationHandle appHandle;
+
+        public ApplicationResourceManager(IApplicationHandle appHandle) {
+            this.appHandle = appHandle;
+            /*this.applicationName = applicationName;
+            homePath = Path.Combine(serverPath, applicationName);
             Directory.CreateDirectory(homePath);
-            this.resourcesPath = Path.Combine(homePath, "Resources");
-            this.viewsPath = Path.Combine(homePath, "Views");
+            resourcesPath = Path.Combine(homePath, "Resources");
+            viewsPath = Path.Combine(homePath, "Views");
             Directory.CreateDirectory(resourcesPath);
             Directory.CreateDirectory(viewsPath);
-            this.includesPath = Path.Combine(homePath, "Includes");
-            Directory.CreateDirectory(includesPath);
+            includesPath = Path.Combine(homePath, "Includes");
+            Directory.CreateDirectory(includesPath);*/
         }
 
 
         public bool HasView(string path) {
-            return views.ContainsKey(path);
+            string localPath = appHandle.TranslateViewPath(path);
+            return views.ContainsKey(localPath);
         }
 
         public ViewSource GetView(string path) {
-            if (HasView(path))
-                return views[path];
+            string localPath = appHandle.TranslateViewPath(path);
+            if (views.ContainsKey(localPath))
+                return views[localPath];
             return null;
         }
-    
+
         public XmlDocument IncludeDocument(string path) {
-            if (path.StartsWith("/")) path = path.Substring(1);
-            string localPath = Path.Combine(includesPath, path);
-            localPath = Path.GetFullPath(localPath);
-            if (!includeDocuments.ContainsKey(localPath) && File.Exists(localPath) && localPath.EndsWith(".xml")) {
-                using(FileStream fs = new FileStream(localPath, FileMode.Open)) {
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(fs);
-                    includeDocuments[localPath] = doc;
+            string localPath = appHandle.TranslateIncludePath(path);
+            if (includeDocuments.ContainsKey(localPath))
+                return (XmlDocument)includeDocuments[localPath].CloneNode(true);
+            return null;
+        }
+
+        public bool StaticResource(string path, Stream target) {
+            string localPath = appHandle.TranslateStaticPath(path);
+            if (staticResources.ContainsKey(localPath)) {
+                MemoryStream source = staticResources[localPath];
+                lock (source) {
+                    source.CopyTo(target);
+                    source.Position = 0;
                 }
+                return true;
             }
-            if (!includeDocuments.ContainsKey(localPath))
-                return null;
-            return (XmlDocument) includeDocuments[localPath].CloneNode(true);
+            return false;
         }
 
 
-        public void Load(IApplicationHandle appHandle) {
-            string basePrefix = appHandle.ApplicationNamespace;
-            string resourcePrefix = basePrefix + ".Resources.";
-            string viewsPrefix = basePrefix + ".Views.";
-            string includesPrefix = basePrefix + ".Includes.";
+        public Stream StaticResource(string path) {
+            MemoryStream ms = new MemoryStream();
+            if(StaticResource(path, ms)) {
+                return ms;
+            }
+            ms.Dispose();
+            return null;
+        }
 
-            Assembly assembly = appHandle.DefiningAssembly;
+        public bool HasStaticResource(string path) {
+            string localPath = appHandle.TranslateStaticPath(path);
+            return staticResources.ContainsKey(localPath);
+        }
 
-            foreach (string resource in assembly.GetManifestResourceNames()) {
-                string targetPath;
-                if (resource.StartsWith(resourcePrefix)) {
-                    logger.Debug("Discovered resource: {0}", resource);
-                    targetPath = LoadResource(assembly, resourcesPath, resourcePrefix, resource);
-                    MonitorResource(assembly, resource, (sender, resKey, filePath) => OnResourceChanged(sender, resKey, filePath, targetPath));
-                } else if (resource.StartsWith(viewsPrefix)) {
-                    logger.Debug("Discovered view: {0}", resource);
-                    targetPath = LoadResource(assembly, viewsPath, viewsPrefix, resource);
-                    LoadView(assembly, viewsPrefix, resource);
-                    MonitorResource(assembly, resource, (sender, resKey, filePath) => OnViewChanged(sender, resKey, filePath, viewsPrefix));
-                    
-                }
-                if (resource.StartsWith(includesPrefix)) {
-                    logger.Debug("Discovered include: {0}", resource);
-                    targetPath = LoadResource(assembly, includesPath, includesPrefix, resource);
-                    MonitorResource(assembly, resource, (sender, resKey, filePath) => OnResourceChanged(sender, resKey, filePath, targetPath));
-                }
+
+        public void Load() {
+            foreach (string viewResource in appHandle.ViewResources) {
+                Console.WriteLine(viewResource);
+                LoadView(viewResource);
+            }
+            foreach (string includeResource in appHandle.IncludeResources) {
+                LoadInclude(includeResource);
+            }
+            foreach (string staticResource in appHandle.StaticResources) {
+                LoadStaticResource(staticResource);
+            }
+        }
+
+        private void LoadStaticResource(string path) {
+            MemoryStream ms = new MemoryStream();
+            using (Stream input = appHandle.OpenResource(path)) {
+                input.CopyTo(ms);
+            }
+            ms.Position = 0;
+            staticResources[path] = ms;
+        }
+        
+        private void LoadView(string path) {
+            using (Stream input = appHandle.OpenResource(path)) {
+                views[path] = new ViewSource(input);
+            }
+        }
+
+        private void LoadInclude(string path) {
+            using (Stream input = appHandle.OpenResource(path)) {
+                XmlDocument document = new XmlDocument();
+                document.Load(input);
+                includeDocuments[path] = document;
             }
         }
 
@@ -142,37 +173,16 @@ namespace RandomCodeOrg.Pluto.Resources {
         }
 
 
-        protected void LoadView(Assembly assembly, string prefix, string resourceKey) {
-            string resourcePath = BuildResourcePath(prefix, resourceKey);
-            using(Stream input = assembly.GetManifestResourceStream(resourceKey)) {
-                views[resourcePath] = new ViewSource(input);
-            }
-        }
-
-        protected string LoadResource(Assembly assembly, string parentPath, string resourcePrefix, string resourceKey) {
-            string targetPath = BuildResourcePath(parentPath, resourcePrefix, resourceKey);
-            if (!Directory.Exists(Path.GetDirectoryName(targetPath)))
-                Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
-            using(Stream input = assembly.GetManifestResourceStream(resourceKey)) {
-                using (Stream output = new FileStream(targetPath, FileMode.Create, FileAccess.Write)) {
-                    input.CopyTo(output);
-                }
-            }
-            return targetPath;
-        }
-
-        public void Unload() {
-            DeleteRecursive(homePath);
-        }
 
 
+        [Obsolete("", false)]
         protected string BuildResourcePath(string prefix, string resourceName) {
             string suffix = resourceName.Substring(prefix.Length);
             string result = "";
             string[] parts = suffix.Split('.');
             for (int i = 0; i < parts.Length; i++) {
                 if (i == parts.Length - 2) {
-                    result +=  String.Format("/{0}.{1}",  parts[i] , parts[i + 1]);
+                    result += String.Format("/{0}.{1}", parts[i], parts[i + 1]);
                     break;
                 } else {
                     result += String.Format("/{0}", parts[i]);
@@ -181,45 +191,7 @@ namespace RandomCodeOrg.Pluto.Resources {
             return result;
         }
 
-        protected string BuildResourcePath(string basePath, string prefix, string resourceName) {
-            string suffix = resourceName.Substring(prefix.Length);
-            string result = basePath;
-            string[] parts = suffix.Split('.');
-            for (int i = 0; i < parts.Length; i++) {
-                if (i == parts.Length - 2) {
-                    result = Path.Combine(result, parts[i] + "." + parts[i + 1]);
-                    break;
-                } else {
-                    result = Path.Combine(result, parts[i]);
-                }
-            }
-            return result;
-        }
 
-        private void DeleteRecursive(string path) {
-            if (!File.Exists(path) && !Directory.Exists(path))
-                return;
-            if (File.Exists(path)) {
-                File.Delete(path);
-                return;
-            }
-            if (Directory.Exists(path)) {
-                foreach (string childFile in Directory.GetFiles(path)) {
-                    DeleteRecursive(childFile);
-                }
-                foreach (string childDir in Directory.GetDirectories(path)) {
-                    DeleteRecursive(childDir);
-                }
-                try {
-                    Directory.Delete(path);
-                } catch (IOException) {
-                    Directory.Delete(path);
-                } catch (UnauthorizedAccessException) {
-                    Directory.Delete(path);
-                }
-
-            }
-        }
 
     }
 }
