@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using static RandomCodeOrg.ENetFramework.FrameworkConstants;
 
 namespace RandomCodeOrg.ENetFramework.Deployment {
-    internal class DevelopmentDeploymentPackage : IDeploymentPackage {
+    public class DevelopmentDeploymentPackage : IDeploymentPackage {
 
 
         private readonly ISet<IDependency> dependencies = new HashSet<IDependency>();
@@ -20,6 +20,12 @@ namespace RandomCodeOrg.ENetFramework.Deployment {
         public string AssemblyFileName => fileName;
 
         private readonly Assembly currentAssembly;
+
+        public Assembly ApplicationAssembly {
+            get {
+                return currentAssembly;
+            }
+        }
 
         public DevelopmentDeploymentPackage(Assembly currentAssembly) {
             this.currentAssembly = currentAssembly;

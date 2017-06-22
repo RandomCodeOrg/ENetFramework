@@ -126,7 +126,7 @@ namespace RandomCodeOrg.Pluto {
         }
         
 
-        public Stream OpenResource(string identifier) {
+        public virtual Stream OpenResource(string identifier) {
             return assembly.GetManifestResourceStream(GetAssemblyIdentifier(identifier));
         }
 
@@ -150,5 +150,8 @@ namespace RandomCodeOrg.Pluto {
             }
         }
 
+        public virtual bool ObserveResource(string path, ResourceModifiedCalback callback) {
+            return false;
+        }
     }
 }

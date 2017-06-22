@@ -13,11 +13,13 @@ using RandomCodeOrg.Pluto.Debugging;
 namespace RandomCodeOrg.Pluto.Resources {
     public class ApplicationResourceManager {
 
+
+        /*
         private readonly string homePath;
         private readonly string resourcesPath;
         private readonly string includesPath;
         private readonly string viewsPath;
-        private readonly string applicationName;
+        private readonly string applicationName;*/
 
         private readonly SourceChangeMonitor sourceChangeMonitor = new SourceChangeMonitor();
 
@@ -33,6 +35,7 @@ namespace RandomCodeOrg.Pluto.Resources {
             }
         }
 
+        /*
         public string HomePath {
             get {
                 return homePath;
@@ -43,7 +46,7 @@ namespace RandomCodeOrg.Pluto.Resources {
             get {
                 return resourcesPath;
             }
-        }
+        }*/
 
         private readonly ILogger logger = LoggerFactory.GetLogger(typeof(ApplicationResourceManager));
         private readonly SourceFileFinder sff = new SourceFileFinder();
@@ -52,15 +55,6 @@ namespace RandomCodeOrg.Pluto.Resources {
 
         public ApplicationResourceManager(IApplicationHandle appHandle) {
             this.appHandle = appHandle;
-            /*this.applicationName = applicationName;
-            homePath = Path.Combine(serverPath, applicationName);
-            Directory.CreateDirectory(homePath);
-            resourcesPath = Path.Combine(homePath, "Resources");
-            viewsPath = Path.Combine(homePath, "Views");
-            Directory.CreateDirectory(resourcesPath);
-            Directory.CreateDirectory(viewsPath);
-            includesPath = Path.Combine(homePath, "Includes");
-            Directory.CreateDirectory(includesPath);*/
         }
 
 
@@ -114,14 +108,16 @@ namespace RandomCodeOrg.Pluto.Resources {
 
         public void Load() {
             foreach (string viewResource in appHandle.ViewResources) {
-                Console.WriteLine(viewResource);
                 LoadView(viewResource);
+                MonitorResource(viewResource, LoadView);
             }
             foreach (string includeResource in appHandle.IncludeResources) {
                 LoadInclude(includeResource);
+                MonitorResource(includeResource, LoadInclude);
             }
             foreach (string staticResource in appHandle.StaticResources) {
                 LoadStaticResource(staticResource);
+                MonitorResource(staticResource, LoadStaticResource);
             }
         }
 
@@ -147,6 +143,14 @@ namespace RandomCodeOrg.Pluto.Resources {
                 includeDocuments[path] = document;
             }
         }
+
+        private void MonitorResource(string path, Action<string> updateAction) {
+            if (!IsDebugging)
+                return;
+            appHandle.ObserveResource(path, (sender, rsc) => updateAction(rsc));
+        }
+        
+        /*
 
         private void MonitorResource(Assembly assembly, string source, SourceChangeMonitor.ResourceChangedDelegate callback) {
             if (!IsDebugging)
@@ -190,7 +194,7 @@ namespace RandomCodeOrg.Pluto.Resources {
             }
             return result;
         }
-
+        */
 
 
     }

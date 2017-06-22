@@ -7,9 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RandomCodeOrg.Pluto {
+
     public interface IApplicationHandle {
-
-
 
         /// <summary>
         /// Returns the applications namespace.
@@ -47,14 +46,15 @@ namespace RandomCodeOrg.Pluto {
 
         IReadOnlyCollection<string> StaticResources { get; }
         
-
         string TranslateViewPath(string source);
 
         string TranslateIncludePath(string resource);
 
         string TranslateStaticPath(string resource);
 
-        Stream OpenResource(string identifier);
+        Stream OpenResource(string path);
+
+        bool ObserveResource(string path, ResourceModifiedCalback callback);
 
     }
 }

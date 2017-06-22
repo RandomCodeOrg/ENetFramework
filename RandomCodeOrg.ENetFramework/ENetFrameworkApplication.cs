@@ -98,7 +98,7 @@ namespace RandomCodeOrg.ENetFramework {
                 Deployment.CompressedApplicationPackage.Create("package.capp", package);
             }
 
-            container.Deploy(toDeploy);
+            container.Deploy(package);
             Console.ReadKey();
             container.Shutdown();
             Environment.Exit(0);

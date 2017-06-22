@@ -67,8 +67,13 @@ namespace RandomCodeOrg.Pluto {
         }
 
         public void Deploy(IDeploymentPackage deploymentPackage) {
-            
-            throw new NotImplementedException(); // TODO: Implement
+            if(deploymentPackage is DevelopmentDeploymentPackage) {
+                DevelopmentDeploymentPackage ddp = deploymentPackage.As<DevelopmentDeploymentPackage>();
+                DebugApplication applicationHandle = new DebugApplication(ddp);
+                Deploy(applicationHandle);
+                return;
+            }
+            throw new NotImplementedException("Not yet implemented!");
         }
 
 

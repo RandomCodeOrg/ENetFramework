@@ -56,9 +56,9 @@ namespace RandomCodeOrg.Pluto {
         public void Start() {
             logger.Info("Starting application '{0}' v{1}...", appHandle.FriendlyName, appHandle.Version);
             logger.Debug("Assembly location is: {0}", appHandle.Location);
-            logger.Debug("Application directory is: {0}", resourcesManager.HomePath);
             
-            mapping.Map("/resources/(.*)", resourcesManager.ResourcesPath + @"/{0}");
+            
+            mapping.Map("/resources/(.*)", "/{0}");
 
             resourcesManager.Load();
 
