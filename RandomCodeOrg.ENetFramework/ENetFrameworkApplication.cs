@@ -41,8 +41,14 @@ namespace RandomCodeOrg.ENetFramework {
             string containerPath = null;
 
             ApplicationStartupConfig startupConfig = new ApplicationStartupConfig(args);
-            if (!startupConfig.TryOption(StartupArgument.CONTAINER, out containerName) & !startupConfig.TryOption(StartupArgument.CONTAINER_PATH, out containerPath))
+            if (!startupConfig.TryOption(StartupArgument.CONTAINER, out containerName) & !startupConfig.TryOption(StartupArgument.CONTAINER_PATH, out containerPath)) {
+                Console.WriteLine("The container could not be found!");
+                Console.WriteLine("You may use the command line arguments -Container and -ContainerPath to specify the application server to be used.");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
                 return;
+            }
             bool remoteLoading = startupConfig.HasFlag(StartupArgument.REMOTE_LOADING);
 
             Debug.WriteLine("Using container {0} at '{1}.'", containerName, containerPath);
@@ -52,7 +58,10 @@ namespace RandomCodeOrg.ENetFramework {
             if (!File.Exists(filePath))
                 filePath = containerPath;
             if (!File.Exists(filePath)) {
-                Debug.WriteLine("Container could not be found.");
+                Console.WriteLine("The container could not be found!");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
                 return;
             }
             filePath = Path.GetFullPath(filePath);
