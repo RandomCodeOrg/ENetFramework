@@ -8,6 +8,7 @@ using RandomCodeOrg.ENetFramework;
 using slf4net;
 using NHttp;
 using RandomCodeOrg.Pluto.Health;
+using RandomCodeOrg.ENetFramework.Deployment;
 
 namespace RandomCodeOrg.Pluto {
     public class PlutoApplicationContainer : IApplicationContainer {
@@ -35,6 +36,8 @@ namespace RandomCodeOrg.Pluto {
                 return requestHandler;
             }
         }
+
+        public bool DisableExtraction { get; set; } = false;
 
         public PlutoApplicationContainer() {
             homePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "PlutoApplicationContainer");
@@ -78,7 +81,10 @@ namespace RandomCodeOrg.Pluto {
             }
             logger.Info("Shutdown completed.");
         }
-       
 
+        public void Deploy(IDeploymentPackage deploymentPackage) {
+            
+            throw new NotImplementedException(); // TODO: Implement
+        }
     }
 }

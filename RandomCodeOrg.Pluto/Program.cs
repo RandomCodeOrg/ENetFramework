@@ -15,9 +15,13 @@ using System.Reflection;
 namespace RandomCodeOrg.Pluto {
     class Program {
         static void Main(string[] args) {
+            ApplicationStartupConfig startupConfig = new ApplicationStartupConfig(args);
             
-
             var applicationContainer = new PlutoApplicationContainer();
+
+            if (startupConfig.HasFlag(StartupArgument.DISABLE_EXTRACTION))
+                applicationContainer.DisableExtraction = true;
+
             applicationContainer.Start();
 
             ENetFrameworkContext.Instance.Register(applicationContainer);

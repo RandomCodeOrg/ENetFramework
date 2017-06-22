@@ -97,6 +97,7 @@
     <Compile Include="Http\RequestHandlerChain.cs" />
     <Compile Include="Http\ResourceRequestHandler.cs" />
     <Compile Include="Http\ViewRequestHandler.cs" />
+    <Compile Include="IApplicationHandle.cs" />
     <Compile Include="PlutoApplicationContainer.cs" />
     <Compile Include="PlutoApplicationContext.cs" />
     <Compile Include="Program.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Resources\ViewSource.cs" />
     <Compile Include="Sessions\Session.cs" />
     <Compile Include="Sessions\SessionManager.cs" />
+    <Compile Include="StartupArgument.cs" />
     <Compile Include="Statements\CompiledStatementCollection.cs" />
     <Compile Include="Statements\CompiledStatementToken.cs" />
     <Compile Include="Statements\CompiledToken.cs" />

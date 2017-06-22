@@ -11,6 +11,7 @@ namespace RandomCodeOrg.ENetFramework {
         public static readonly StartupArgument CONTAINER = new StartupArgument("Container");
         public static readonly StartupArgument CONTAINER_PATH = new StartupArgument("ContainerPath");
         public static readonly StartupArgument REMOTE_LOADING = new StartupArgument("RemoteLoading");
+        public static readonly StartupArgument CRATE_PACKAGE = new StartupArgument("CreatePackage");
 
         private readonly string flagName;
 

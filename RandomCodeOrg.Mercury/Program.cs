@@ -13,7 +13,8 @@ namespace RandomCodeOrg.Mercury {
                 new string[] {
                     "-Container", "RandomCodeOrg.Pluto",
                     "-ContainerPath", @"..\..\..\RandomCodeOrg.Pluto\bin\Debug",
-                    "-RemoteLoading"
+                    "-RemoteLoading",
+                    "-CreatePackage"
                 });
         }
     }

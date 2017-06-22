@@ -82,18 +82,23 @@ namespace RandomCodeOrg.ENetFramework {
             Assembly toDeploy = GetType().Assembly;
 
 
-            Start(containerAssembly, toDeploy);
+            Start(containerAssembly, toDeploy, startupConfig.HasFlag(StartupArgument.CRATE_PACKAGE));
         }
 
 
-        private void Start(Assembly containerAssembly, Assembly toDeploy) {
+        private void Start(Assembly containerAssembly, Assembly toDeploy, bool createPackage) {
             containerAssembly.EntryPoint.Invoke(null, new object[] { new string[] { } });
             var container = ENetFrameworkContext.Instance.ApplicationContainer;
             if (container == null) {
                 Debug.WriteLine("Startup failed.");
                 return;
             }
-            container.Deploy(toDeploy);
+            var package = new Deployment.DevelopmentDeploymentPackage(toDeploy);
+            if (createPackage) {
+                Deployment.CompressedApplicationPackage.Create("package.capp", package);
+            }
+
+            container.Deploy(package);
             Console.ReadKey();
             container.Shutdown();
             Environment.Exit(0);
