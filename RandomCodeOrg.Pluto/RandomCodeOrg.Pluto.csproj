@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblydefinedApplication.cs" />
     <Compile Include="CDI\CDIContainer.cs" />
     <Compile Include="CDI\ConstantImplementationResolver.cs" />
     <Compile Include="CDI\ContextStateManager.cs" />

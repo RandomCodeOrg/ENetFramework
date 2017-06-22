@@ -88,11 +88,14 @@ namespace RandomCodeOrg.Pluto.Resources {
         }
 
 
-        public void Load(Assembly assembly) {
-            string basePrefix = assembly.GetName().Name;
+        public void Load(IApplicationHandle appHandle) {
+            string basePrefix = appHandle.ApplicationNamespace;
             string resourcePrefix = basePrefix + ".Resources.";
             string viewsPrefix = basePrefix + ".Views.";
             string includesPrefix = basePrefix + ".Includes.";
+
+            Assembly assembly = appHandle.DefiningAssembly;
+
             foreach (string resource in assembly.GetManifestResourceNames()) {
                 string targetPath;
                 if (resource.StartsWith(resourcePrefix)) {

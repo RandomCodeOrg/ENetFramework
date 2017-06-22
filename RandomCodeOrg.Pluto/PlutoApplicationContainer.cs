@@ -51,23 +51,7 @@ namespace RandomCodeOrg.Pluto {
         }
         
         public void Deploy(Assembly assembly) {
-            logger.Info("Validating {0}...", assembly.FullName);
-            var report = validator.Validate(assembly);
-            string message = report.GetPrintableString();
-            if (report.HasErrors) {
-                logger.Error(message);
-            }else if (report.HasWarnings) {
-                logger.Warn(message);
-            }else {
-                logger.Info(message);
-            }
-            if (report.HasErrors)
-                throw new ApplicationValidationException(string.Format("The application failed validation.\n\n{0}", message));
-
-
-            PlutoApplicationContext application = new PlutoApplicationContext(this, assembly);
-            applications.Add(application);
-            application.Start();
+            Deploy(new AssemblydefinedApplication(assembly));
         }
 
         
@@ -86,5 +70,27 @@ namespace RandomCodeOrg.Pluto {
             
             throw new NotImplementedException(); // TODO: Implement
         }
+
+
+        protected void Deploy(IApplicationHandle appHandle) {
+            logger.Info("Validating {0}...", appHandle.FriendlyName);
+            var report = validator.Validate(appHandle.DefiningAssembly);
+            string message = report.GetPrintableString();
+            if (report.HasErrors) {
+                logger.Error(message);
+            } else if (report.HasWarnings) {
+                logger.Warn(message);
+            } else {
+                logger.Info(message);
+            }
+            if (report.HasErrors)
+                throw new ApplicationValidationException(string.Format("The application failed validation.\n\n{0}", message));
+            
+
+            PlutoApplicationContext application = new PlutoApplicationContext(this, appHandle);
+            applications.Add(application);
+            application.Start();
+        }
+
     }
 }

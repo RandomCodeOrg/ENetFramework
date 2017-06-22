@@ -12,10 +12,12 @@ using RandomCodeOrg.Pluto.Statements;
 namespace RandomCodeOrg.Pluto {
     public class PlutoApplicationContext {
 
-        private readonly Assembly assembly;
+        //TODO: Remove me
+        //private readonly Assembly assembly;
+
+        private readonly IApplicationHandle appHandle;
 
         private readonly ILogger logger = LoggerFactory.GetLogger(typeof(PlutoApplicationContext));
-        private readonly string applicationName;
         private readonly PlutoApplicationContainer container;
         private Http.Filters.RequestFilter requestFilter;
 
@@ -33,33 +35,35 @@ namespace RandomCodeOrg.Pluto {
         private readonly CDI.ContextStateManager contextManager;
 
 
-        public PlutoApplicationContext(PlutoApplicationContainer container, Assembly assembly) {
-            this.assembly = assembly;
+        
+
+        public PlutoApplicationContext(PlutoApplicationContainer container, IApplicationHandle applicationHandle) {
+            this.appHandle = applicationHandle;
             contextManager = new CDI.ContextStateManager(sessionManager);
             cdiContainer = new CDI.CDIContainer(contextManager).Use(new CDI.LoggerInjector());
-            statementCompiler = new Statements.Compiler.PlutoStatementCompiler(cdiContainer, assembly.EntryPoint.DeclaringType.Namespace);
-            statementCompiler.Reference(assembly);
+            statementCompiler = new Statements.Compiler.PlutoStatementCompiler(cdiContainer, appHandle.ApplicationNamespace);
+            statementCompiler.Reference(appHandle.DefiningAssembly);
             statementParser = new PlutoStatementParser(statementCompiler);
             this.container = container;
-            applicationName = assembly.GetName().Name;
             requestFilter = new Http.Filters.ConstantRequestFilter(true);
             mapping = new Http.Mapping.PathMapping();
             resourceHandler = new ResourceRequestHandler(requestFilter & new Http.Filters.PathRequestFilter("/resources/.*"), mapping);
-            resourcesManager = new Resources.ApplicationResourceManager(container.HomePath, applicationName);
+            resourcesManager = new Resources.ApplicationResourceManager(container.HomePath, appHandle.FriendlyName);
             viewHandler = new ViewRequestHandler(requestFilter, resourcesManager, statementParser, contextManager, sessionManager);
+
         }
 
         public void Start() {
-            logger.Info("Starting application '{0}' v{1}...", applicationName, assembly.GetName().Version);
-            logger.Debug("Assembly location is: {0}", assembly.Location);
+            logger.Info("Starting application '{0}' v{1}...", appHandle.FriendlyName, appHandle.Version);
+            logger.Debug("Assembly location is: {0}", appHandle.Location);
             logger.Debug("Application directory is: {0}", resourcesManager.HomePath);
             
             mapping.Map("/resources/(.*)", resourcesManager.ResourcesPath + @"\{0}");
 
-            resourcesManager.Load(assembly);
+            resourcesManager.Load(appHandle);
 
             logger.Info("Starting CDI container...");
-            cdiContainer.Load(assembly);
+            cdiContainer.Load(appHandle.DefiningAssembly);
 
             logger.Info("Registering request handlers...");
             container.HandlerChain.Register(resourceHandler);
@@ -82,7 +86,7 @@ namespace RandomCodeOrg.Pluto {
         }
 
         public void Stop() {
-            logger.Info("Stopping application '{0}'...", applicationName);
+            logger.Info("Stopping application '{0}'...", appHandle.FriendlyName);
 
             logger.Trace("Releasing resources.");
 
