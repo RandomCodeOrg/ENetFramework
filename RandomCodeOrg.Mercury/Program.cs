@@ -9,7 +9,12 @@ using RandomCodeOrg.ENetFramework;
 namespace RandomCodeOrg.Mercury {
     class Program : ENetFrameworkApplication {
         static void Main(string[] args) {
-            new Program().Start(args);
+            new Program().Start(
+                new string[] {
+                    "-Container", "RandomCodeOrg.Pluto",
+                    "-ContainerPath", @"..\..\..\RandomCodeOrg.Pluto\bin\Debug",
+                    "-RemoteLoading"
+                });
         }
     }
 }
