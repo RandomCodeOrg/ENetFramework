@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -89,6 +90,7 @@
     <Compile Include="CDI\InjectorChain.cs" />
     <Compile Include="CDI\LoggerInjector.cs" />
     <Compile Include="CDI\ManagedContext.cs" />
+    <Compile Include="CDI\PersistenceProxyImplementation.cs" />
     <Compile Include="CDI\PropertyOverwriter.cs" />
     <Compile Include="CDI\ProxyImplementation.cs" />
     <Compile Include="CDI\ProxyImplementationBuilder.cs" />

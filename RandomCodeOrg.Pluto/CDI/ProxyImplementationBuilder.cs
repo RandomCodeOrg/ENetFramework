@@ -14,14 +14,13 @@ namespace RandomCodeOrg.Pluto.CDI {
         
 
         private int counter = 0;
-
-        private readonly Type baseType = typeof(ProxyImplementation);
+        
 
         public bool ExportGenerated { get; set; } = true;
 
         public ProxyImplementationBuilder(Assembly assembly) {
-            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new System.Reflection.AssemblyName(assembly.GetName().Name + "generated"), AssemblyBuilderAccess.RunAndSave);
-            moduleBuilder = assemblyBuilder.DefineDynamicModule(assembly.GetName().Name + "generated", "test.dll");
+            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assembly.GetName().Name + "generated"), AssemblyBuilderAccess.RunAndSave);
+            moduleBuilder = assemblyBuilder.DefineDynamicModule(assembly.GetName().Name + "generated", "debug.dll");
         }
 
         public AssemblyBuilder Builder {
@@ -32,7 +31,9 @@ namespace RandomCodeOrg.Pluto.CDI {
         
     
 
-        public Type Build(params Type[] interfaces) {
+
+        public Type Build<T>(params Type[] interfaces) where T : ProxyImplementation {
+            Type baseType = typeof(T);
             TypeBuilder tb = moduleBuilder.DefineType(string.Format("DynamicProxy{0}", counter++), TypeAttributes.Public, baseType, interfaces);
             foreach (Type toImplement in interfaces) {
                 tb.AddInterfaceImplementation(toImplement);
@@ -48,7 +49,7 @@ namespace RandomCodeOrg.Pluto.CDI {
                         generator.Emit(OpCodes.Ldarg_0);
                         generator.Emit(OpCodes.Ldstr, propInfo.Name);
                         generator.EmitCall(OpCodes.Callvirt, baseType.GetMethod("GetProperty", new Type[] { typeof(string) }), null);
-                        if (!propInfo.PropertyType.IsByRef)
+                        if (IsBoxingRequired(propInfo.PropertyType))
                             generator.Emit(OpCodes.Unbox_Any, propInfo.PropertyType);
                         generator.Emit(OpCodes.Ret);
                         propertyBuilder.SetGetMethod(mb);
@@ -82,7 +83,7 @@ namespace RandomCodeOrg.Pluto.CDI {
                         generator.Emit(OpCodes.Ldloc_0);
                         generator.Emit(OpCodes.Ldc_I4, i);
                         generator.Emit(OpCodes.Ldarg, (UInt16)(i+1));
-                        if (!parameters[i].ParameterType.IsByRef) {
+                        if (IsBoxingRequired(parameters[i].ParameterType)) {
                             generator.Emit(OpCodes.Box, parameters[i].ParameterType);
                         }
                         generator.Emit(OpCodes.Stelem_Ref);
@@ -94,7 +95,7 @@ namespace RandomCodeOrg.Pluto.CDI {
                     generator.EmitCall(OpCodes.Callvirt, baseType.GetMethod("CallMethod", new Type[] { typeof(string), typeof(object[]) }), null);
                     if (methodInfo.ReturnType == typeof(void)) {
                         generator.Emit(OpCodes.Pop);
-                    } else if (!methodInfo.ReturnType.IsByRef)
+                    } else if (IsBoxingRequired(methodInfo.ReturnType))
                         generator.Emit(OpCodes.Box);
                     generator.Emit(OpCodes.Ret);
                     
@@ -106,6 +107,11 @@ namespace RandomCodeOrg.Pluto.CDI {
 
             return tb.CreateType();
             
+        }
+
+        
+        private bool IsBoxingRequired(Type t) {
+            return t.IsValueType;
         }
         
 

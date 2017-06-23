@@ -42,13 +42,20 @@ namespace RandomCodeOrg.Pluto.CDI {
                 if ((managedAttr = t.GetCustomAttribute<ManagedAttribute>()) != null) {
                     scopeAttr = t.GetCustomAttribute<ScopeAttribute>();
                     lifetime = Lifetime.RequestScoped;
-                    if (managedAttr is PersistenceProviderAttribute)
+                    bool isPersistenceProvider = managedAttr is PersistenceProviderAttribute;
+
+                    if (isPersistenceProvider)
                         lifetime = Lifetime.ApplicationScoped;
                     if (scopeAttr != null)
                         lifetime = scopeAttr.Scope;
                     foreach(Type interfaceType in t.GetInterfaces()) {
-                        if (!proxyTypes.ContainsKey(interfaceType))
-                            proxyTypes[interfaceType] = proxyBuilder.Build(interfaceType);
+                        if (!proxyTypes.ContainsKey(interfaceType)) {
+                            if (isPersistenceProvider)
+                                proxyTypes[interfaceType] = proxyBuilder.Build<PersistenceProxyImplementation>(interfaceType);
+                            else
+                                proxyTypes[interfaceType] = proxyBuilder.Build<ProxyImplementation>(interfaceType);
+
+                        }
                     }
                     Register(t, lifetime);
                     if (lifetime == Lifetime.ApplicationScoped)
@@ -59,6 +66,8 @@ namespace RandomCodeOrg.Pluto.CDI {
 
             foreach (Type t in toCreate)
                 Activate(null, t);
+
+            proxyBuilder.Builder.Save("debug.dll");
 
         }
 

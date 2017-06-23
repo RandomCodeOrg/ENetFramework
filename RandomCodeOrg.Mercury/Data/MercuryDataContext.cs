@@ -11,7 +11,7 @@ namespace RandomCodeOrg.Mercury.Data {
     
     public interface IMercuryData {
 
-        void AddVisitor(int id);
+        Visitor AddVisitor(int id);
         
     }
 
@@ -26,9 +26,10 @@ namespace RandomCodeOrg.Mercury.Data {
             
         }
 
-        public void AddVisitor(int id) {
+        public Visitor AddVisitor(int id) {
             Visitor visitor = new Visitor() { Timestamp = DateTime.Now, ResourceId = id };
             Visitors.Add(visitor);
+            return visitor;
         }
 
 
