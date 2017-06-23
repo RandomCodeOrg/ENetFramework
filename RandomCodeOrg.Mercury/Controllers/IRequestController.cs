@@ -40,7 +40,7 @@ namespace RandomCodeOrg.Mercury.Controllers {
 
         [OnDispose]
         private void Destroy() {
-            logger.Debug("... request controller #{0}: over and out!");
+            logger.Debug("... request controller #{0}: over and out!", number);
         }
 
 
