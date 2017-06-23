@@ -156,7 +156,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\plutoIcon.svg" />
+    <Content Include="Images\plutotext200.png" />
+    <Content Include="Images\plutotext300.png" />
+    <Content Include="Images\plutotext400.png" />
+    <Content Include="Images\plutotext800.png" />
     <Content Include="pluto64.ico" />
+    <Content Include="Images\plutoText.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

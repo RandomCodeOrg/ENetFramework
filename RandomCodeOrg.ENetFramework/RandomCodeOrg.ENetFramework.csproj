@@ -92,5 +92,15 @@
     </None>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Images\frameworkLogo.svg" />
+    <Content Include="Images\frameworkLogo100.png" />
+    <Content Include="Images\frameworkLogo200.png" />
+    <Content Include="Images\frameworkLogo50.png" />
+    <Content Include="Images\frameworkText.svg" />
+    <Content Include="Images\frameworkText200.png" />
+    <Content Include="Images\frameworkText400.png" />
+    <Content Include="Images\frameworkText800.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
