@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="ApplicationValidationException.cs" />
     <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="Data\PersistenceProviderAttribute.cs" />
     <Compile Include="Deployment\CompressedApplicationPackage.cs" />
     <Compile Include="Container\ApplicationScopedAttribute.cs" />
     <Compile Include="Container\OnDisposeAttribute.cs" />

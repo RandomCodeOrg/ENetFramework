@@ -196,6 +196,11 @@ internal class RequestController : IRequestController {
         </tbody>
       </table>
     </net:Fragment>
+
+    <net:Fragment>
+      <h1>Data</h1>
+      <net:Text Content="$sessionController.Name$"/>
+    </net:Fragment>
     
   </net:Substitution>
 

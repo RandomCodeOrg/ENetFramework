@@ -1,4 +1,5 @@
 ﻿using RandomCodeOrg.ENetFramework.Container;
+using RandomCodeOrg.ENetFramework.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace RandomCodeOrg.Pluto.Health {
                 if (managedAttr == null)
                     report.Register(new ValidationEntry(ValidationEntryType.Error, member, "Can't inject instances of '{0}' becuase it is not a managed resource.", typeToInject.FullName));
                 ScopeAttribute scopeAttr = typeToInject.GetCustomAttribute<ScopeAttribute>();
-                if(scopeAttr == null || scopeAttr.Scope != Lifetime.ApplicationScoped) {
+                if((scopeAttr == null && !(managedAttr is PersistenceProviderAttribute)) || (scopeAttr != null && scopeAttr.Scope != Lifetime.ApplicationScoped) ) {
                     report.Register(new ValidationEntry(ValidationEntryType.Error, member, "Can't inject instances of '{0}' because the resource is not application scoped. Consider injecting it by an interface implemented by the required resource or change its scope.", typeToInject.FullName));
                 } else {
                     if (typeToInject.IsAbstract) {

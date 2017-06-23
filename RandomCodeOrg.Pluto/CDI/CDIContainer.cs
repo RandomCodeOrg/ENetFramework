@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RandomCodeOrg.ENetFramework.Container;
 using slf4net;
+using RandomCodeOrg.ENetFramework.Data;
 
 namespace RandomCodeOrg.Pluto.CDI {
     public class CDIContainer {
@@ -41,6 +42,8 @@ namespace RandomCodeOrg.Pluto.CDI {
                 if ((managedAttr = t.GetCustomAttribute<ManagedAttribute>()) != null) {
                     scopeAttr = t.GetCustomAttribute<ScopeAttribute>();
                     lifetime = Lifetime.RequestScoped;
+                    if (managedAttr is PersistenceProviderAttribute)
+                        lifetime = Lifetime.ApplicationScoped;
                     if (scopeAttr != null)
                         lifetime = scopeAttr.Scope;
                     foreach(Type interfaceType in t.GetInterfaces()) {
@@ -62,6 +65,8 @@ namespace RandomCodeOrg.Pluto.CDI {
         internal object GetInstance(Type type, Lifetime lifetime) {
             ManagedContext context = null;
             switch (lifetime) {
+                case Lifetime.ApplicationScoped:
+                    return applicationInstances[type];
                 case Lifetime.RequestScoped:
                     context = contextManager.GetRequestContext();
                     break;
@@ -113,10 +118,19 @@ namespace RandomCodeOrg.Pluto.CDI {
                 type = implementationMapping[type].First();
             }
             Lifetime lifetime = lifetimeMapping[type];
-            if (lifetime == Lifetime.ApplicationScoped && applicationInstances.ContainsKey(type))
+
+            PersistenceProviderAttribute persistenceAttribute = type.GetCustomAttribute<PersistenceProviderAttribute>();
+            bool proxyRequired;
+            if(persistenceAttribute == null) {
+                proxyRequired = lifetime != Lifetime.ApplicationScoped;
+            } else {
+                proxyRequired = originalType.IsInterface;
+            }
+
+            if (!proxyRequired && applicationInstances.ContainsKey(type))
                 return applicationInstances[type];
 
-            if(lifetime == Lifetime.ApplicationScoped) {
+            if(!proxyRequired) {
                 object instance = type.GetConstructor(new Type[] { }).Invoke(new object[] { });
                 applicationInstances[type] = instance;
                 DoInject(instance, true);
