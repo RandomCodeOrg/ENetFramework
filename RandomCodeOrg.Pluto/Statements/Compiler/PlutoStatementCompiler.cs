@@ -4,6 +4,7 @@ using slf4net;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,9 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
 
         private readonly CDIContainer cdi;
 
+
+        private readonly object lockObject = new object();
+
         public CDIContainer CDI {
             get {
                 return cdi;
@@ -45,36 +49,42 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
 
 
         public PlutoStatementCompiler Process(string statement) {
-            if (statementBuilders.ContainsKey(statement))
-                return this;
-            statementBuilders[statement] = new StatementBuilder(cdi, key++, statement);
+            lock (statementBuilders) {
+                if (statementBuilders.ContainsKey(statement))
+                    return this;
+                statementBuilders[statement] = new StatementBuilder(cdi, key++, statement);
+            }
             return this;
         }
 
-        
-        
+
+
 
         public PlutoStatementCompiler Reference(params string[] assemblies) {
-            foreach (string assembly in assemblies)
-                referencedAssemblies.Add(assembly);
+            lock (lockObject) {
+                foreach (string assembly in assemblies)
+                    referencedAssemblies.Add(assembly);
+            }
             return this;
         }
 
 
         public void Reference(params Assembly[] assemblies) {
             string location;
-            foreach (Assembly a in assemblies) {
-                location = GetLocation(a);
-                if (referencedAssemblies.Contains(location))
-                    continue;
-                referencedAssemblies.Add(location);
-                Reference(a.GetReferencedAssemblies().Select(dep => Assembly.Load(dep)).ToArray());
+            lock (lockObject) {
+                foreach (Assembly a in assemblies) {
+                    location = GetLocation(a);
+                    if (referencedAssemblies.Contains(location))
+                        continue;
+                    referencedAssemblies.Add(location);
+                    Reference(a.GetReferencedAssemblies().Select(dep => Assembly.Load(dep)).ToArray());
+                }
             }
         }
-        
+
         private string GetLocation(Assembly a) {
             //if (0 == 0)
-                return a.Location;
+            return a.Location;
             /*string codeBase = a.CodeBase;
             UriBuilder uri = new UriBuilder(codeBase);
             string path = Uri.UnescapeDataString(uri.Path);
@@ -82,16 +92,20 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
         }
 
         public PlutoStatementCompiler Using(params string[] namespaces) {
-            foreach (string namesp in namespaces)
-                this.namespaces.Add(namesp);
+            lock (lockObject) {
+                foreach (string namesp in namespaces)
+                    this.namespaces.Add(namesp);
+            }
             return this;
         }
 
 
         public Type GetCompiledType(string fragment) {
-            return compilationResult[fragment];
+            lock (lockObject) {
+                return compilationResult[fragment];
+            }
         }
-        
+
 
 
 
@@ -119,36 +133,39 @@ namespace RandomCodeOrg.Pluto.Statements.Compiler {
             var assembly = compilerResult.CompiledAssembly;
             return compilerResult.CompiledAssembly.GetType(builder.GetAssemblyQulaifiedName(targetNamespace));
         }
-        
+
 
         public Type Compile(IDictionary<string, Type> variables, string fragment) {
-            if (compilationResult.ContainsKey(fragment))
+            lock (lockObject) {
+                if (compilationResult.ContainsKey(fragment))
+                    return compilationResult[fragment];
+                Process(fragment);
+                StatementBuilder sb = statementBuilders[fragment];
+
+                var codeProvider = CreateCodeProvider();
+                var parameters = CreateParameters();
+
+                Compile(namespaces.ToArray(), variables, codeProvider, parameters, sb);
+
                 return compilationResult[fragment];
-            Process(fragment);
-            StatementBuilder sb = statementBuilders[fragment];
-
-            var codeProvider = CreateCodeProvider();
-            var parameters = CreateParameters();
-            
-            Compile(namespaces.ToArray(), variables, codeProvider, parameters, sb);
-
-            return compilationResult[fragment];
+            }
         }
 
         public void Compile(IDictionary<string, Type> variables) {
-            var csc = CreateCodeProvider();
-            var parameters = CreateParameters();
-           
-            string[] namespacesToImport = namespaces.ToArray();
+            lock (lockObject) {
+                var csc = CreateCodeProvider();
+                var parameters = CreateParameters();
 
-            var result = new Dictionary<string, Type>();
+                string[] namespacesToImport = namespaces.ToArray();
 
-            foreach(StatementBuilder builder in statementBuilders.Values) {
-                Compile(namespacesToImport, variables, csc, parameters, builder);
+                var result = new Dictionary<string, Type>();
+
+                foreach (StatementBuilder builder in statementBuilders.Values) {
+                    Compile(namespacesToImport, variables, csc, parameters, builder);
+                }
             }
-            
         }
-        
+
 
         protected CSharpCodeProvider CreateCodeProvider() {
             return new CSharpCodeProvider();
