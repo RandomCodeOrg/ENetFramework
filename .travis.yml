@@ -2,7 +2,7 @@ language: csharp
 solution: ENetFramework.sln
 install:
   - sudo apt-get install -y gtk-sharp2
-  - nuget restore solution-name.sln
+  - nuget restore ENetFramework.sln
   - rm -rf RandomCodeOrg.Mercury/bin/Debug/x86
   - rm -rf RandomCodeOrg.Mercury/bin/Release/x86
   - rm -rf RandomCodeOrg.Mercury/bin/Debug/amd64
