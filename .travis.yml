@@ -9,3 +9,5 @@ install:
   - rm -rf RandomCodeOrg.Mercury/bin/Release/amd64
   - rm -rf RandomCodeOrg.Mercury/bin/Debug/EntityFramework.SqlServer.dll
   - rm -rf RandomCodeOrg.Mercury/bin/Release/EntityFramework.SqlServer.dll
+  - rm -rf RandomCodeOrg.Mercury/bin/Debug/EntityFramework.SqlServerCompact.dll
+  - rm -rf RandomCodeOrg.Mercury/bin/Release/EntityFramework.SqlServerCompact.dll
