@@ -23,23 +23,25 @@ namespace RandomCodeOrg.Pluto.CDI {
 
         protected object HandleEFCall(DbContext context, MethodInfo method, object[] args) {
             logger.Trace("Scheduling call to entity framework persistence.");
-            using (var dbContextTransaction = context.Database.BeginTransaction()) {
-                try {
-                    logger.Trace("Created new databse transaction.");
-                    object result = base.DoCallMethod(context, method, args);
-                    if (context.ChangeTracker.HasChanges()) {
-                        logger.Debug("Data changed. Saving db context to data store...");
-                        context.SaveChanges();
-                    } else {
-                        logger.Debug("Call did not cause any data changes.");
+            lock (context) {
+                using (var dbContextTransaction = context.Database.BeginTransaction()) {
+                    try {
+                        logger.Trace("Created new databse transaction.");
+                        object result = base.DoCallMethod(context, method, args);
+                        if (context.ChangeTracker.HasChanges()) {
+                            logger.Debug("Data changed. Saving db context to data store...");
+                            context.SaveChanges();
+                        } else {
+                            logger.Debug("Call did not cause any data changes.");
+                        }
+                        dbContextTransaction.Commit();
+                        return result;
+                    } catch {
+                        logger.Warn("An exception occured during the execution. Rolling back transaction...");
+                        dbContextTransaction.Rollback();
+                        logger.Warn("Rollback completed.");
+                        throw;
                     }
-                    dbContextTransaction.Commit();
-                    return result;
-                } catch {
-                    logger.Warn("An exception occured during the execution. Rolling back transaction...");
-                    dbContextTransaction.Rollback();
-                    logger.Warn("Rollback completed.");
-                    throw;
                 }
             }
 

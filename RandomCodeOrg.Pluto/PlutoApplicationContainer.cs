@@ -46,7 +46,14 @@ namespace RandomCodeOrg.Pluto {
         public void Start() {
             server = new HttpServer();
             server.EndPoint = new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8080);
-            server.RequestReceived += (s, e) => requestHandler.HandleRequest(e);
+            server.RequestReceived += (s, e) => {
+                try {
+                    requestHandler.HandleRequest(e);
+                } catch (Exception ex) {
+                    logger.Error(ex, "Could not process a request because an uncaught exception occurred.");
+                    throw;
+                }
+            };
             server.Start();
         }
         
