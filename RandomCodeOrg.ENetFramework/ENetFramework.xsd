@@ -118,7 +118,7 @@
   <xs:complexType name="LabelType">
     <xs:complexContent>
       <xs:extension base="SimpleFrameworkType">
-        <xs:attribute name="Content" use="required" />
+        <xs:attribute name="Content" use="required" type="ExpressionType" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
