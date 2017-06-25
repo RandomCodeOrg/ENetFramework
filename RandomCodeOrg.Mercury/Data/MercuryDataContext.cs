@@ -1,5 +1,6 @@
 ﻿using RandomCodeOrg.ENetFramework.Container;
 using RandomCodeOrg.ENetFramework.Data;
+using slf4net;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -21,9 +22,12 @@ namespace RandomCodeOrg.Mercury.Data {
 
         public virtual DbSet<Visitor> Visitors { get; set; }
 
+        [Inject]
+        private readonly ILogger logger;
 
-        public MercuryDataContext()  {
-            
+        [PostConstruct]
+        public void Initialized() {
+            logger.Info("Data constructed.");
         }
 
         public Visitor AddVisitor(int id) {
@@ -31,7 +35,6 @@ namespace RandomCodeOrg.Mercury.Data {
             Visitors.Add(visitor);
             return visitor;
         }
-
-
+        
     }
 }

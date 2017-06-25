@@ -45,7 +45,7 @@ namespace RandomCodeOrg.Pluto.CDI {
                     bool isPersistenceProvider = managedAttr is PersistenceProviderAttribute;
 
                     if (isPersistenceProvider)
-                        lifetime = Lifetime.ApplicationScoped;
+                        lifetime = Lifetime.RequestScoped;
                     if (scopeAttr != null)
                         lifetime = scopeAttr.Scope;
                     foreach(Type interfaceType in t.GetInterfaces()) {
@@ -66,9 +66,7 @@ namespace RandomCodeOrg.Pluto.CDI {
 
             foreach (Type t in toCreate)
                 Activate(null, t);
-
-            proxyBuilder.Builder.Save("debug.dll");
-
+            
         }
 
         internal object GetInstance(Type type, Lifetime lifetime) {
