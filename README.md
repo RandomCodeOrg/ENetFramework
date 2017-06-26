@@ -1,4 +1,4 @@
-# ![ENetFramework](https://github.com/RandomCodeOrg/ENetFramework/raw/master/RandomCodeOrg.ENetFramework/Images/frameworkText400.png)
+# ![ENetFramework](https://github.com/RandomCodeOrg/ENetFramework/raw/master/frameworkandpluto.png)
 
 [![Build Status](https://travis-ci.org/RandomCodeOrg/ENetFramework.svg?branch=master)](https://travis-ci.org/RandomCodeOrg/ENetFramework) [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
